@@ -66,11 +66,13 @@ int main () {
                                 grayFrame.data);
             
             kernel.setArg(0, frame_CL);
+            kernel.setArg(1, grayFrame.step[0]);
+            kernel.setArg(2, grayFrame.step[1]);
             
             // execute kernel
             queue.enqueueNDRangeKernel(kernel,
                                        cl::NullRange,
-                                       cl::NDRange(framePixels),
+                                       cl::NDRange(grayFrame.rows, grayFrame.cols),
                                        cl::NDRange(1, 1),
                                        NULL);
             // copy the buffer back
