@@ -37,17 +37,34 @@ cl::Kernel ImageProcessor::loadKernel(string filename, string kernel_name)
     return cl::Kernel(program, kernel_name.c_str());
 }
 
+
+// outputs basic information about the device in use.
+void ImageProcessor::deviceInfo()
+{
+    cout << "Device info:" << endl
+         << "Name: " << devices[0].getInfo<CL_DEVICE_NAME>() << endl;
+
+}
+
 /***  Public Methods **********************************************************/
 
-ImageProcessor::ImageProcessor()
+ImageProcessor::ImageProcessor(bool UseGPU)
 {
     try
     {
         // OpenCL Initialization
         cl::Platform::get(&platforms);
-        platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
+
+        if (UseGPU)
+            platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
+        else
+            platforms[0].getDevices(CL_DEVICE_TYPE_CPU, &devices);
+
         context = cl::Context(devices);
         queue = cl::CommandQueue(context, devices[0]);
+
+        // output device information
+        deviceInfo();
         
         // create and load the kernels
         gaussian = loadKernel("gaussian_kernel.cl", "gaussian_kernel");
@@ -59,12 +76,6 @@ ImageProcessor::ImageProcessor()
     {
         cerr << endl << "Error: " << e.what() << " : " << e.err() << endl;
     }
-}
-
-// load the 8bit 1channel grayscale Mat and do opencl initialization
-ImageProcessor::ImageProcessor(cv::Mat &input) : ImageProcessor()
-{
-    LoadImage(input);
 }
 
 // load the 8bit 1channel grayscale Mat

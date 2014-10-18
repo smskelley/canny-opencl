@@ -41,13 +41,15 @@ class ImageProcessor
     // to the other buffer right now.
     void advanceBuff() { bufferIndex ^= 1; }
 
+    // outputs basic information about the device in use.
+    void deviceInfo();
+
     // Given a filename (without its path) load and return the kernel.
     cl::Kernel loadKernel(std::string filename, std::string kernel_name);
   public:
-    ImageProcessor();
+    ImageProcessor(bool UseGPU = true);
 
     // Note that input matrices are assumed to be 8 bit 1 channel grayscale.
-    ImageProcessor(cv::Mat &input);
     void LoadImage(cv::Mat &input);
 
     // Wait for all other operations to complete and then return the cv::Mat
