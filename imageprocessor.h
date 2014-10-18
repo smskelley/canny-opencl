@@ -10,6 +10,10 @@
 
 class ImageProcessor
 {
+    // OpenCV Objects
+    cv::Mat input;
+    cv::Mat output;
+
     // OpenCL Objects
     std::vector<cl::Platform> platforms;
     std::vector<cl::Device> devices;
@@ -21,26 +25,37 @@ class ImageProcessor
     cl::Kernel nonMaxSuppression;
     cl::Kernel hysteresisThresholding;
 
+    // Note that existing code assumes only two buffers exist
     cl::Buffer buffers[2];
 
-    // Keeps track of the next buffer to use as a destination
-    int nextBuffer = 0;
-
-    // OpenCV Objects
-    cv::Mat input;
-    cv::Mat output;
+    // Keeps track of the next buffer to use as a destination. This should
+    // not be accessed directly, instead look at using nextBuff/prevBuff.
+    size_t bufferIndex = 0;
 
     // Private Methods
-    cl::Kernel loadKernel(std::string filename, std::string kernel_name);
+    // nextBuff returns a reference to the next buffer that should be modified.
+    cl::Buffer& nextBuff() { return buffers[bufferIndex]; }
+    // prevBuff returns a reference to the previous buffer that was modified.
+    cl::Buffer& prevBuff() { return buffers[bufferIndex ^ 1]; }
+    // Advance the buffer. Note there's only two, so right now it just swaps
+    // to the other buffer right now.
+    void advanceBuff() { bufferIndex ^= 1; }
 
+    // Given a filename (without its path) load and return the kernel.
+    cl::Kernel loadKernel(std::string filename, std::string kernel_name);
   public:
     ImageProcessor();
 
     // Note that input matrices are assumed to be 8 bit 1 channel grayscale.
     ImageProcessor(cv::Mat &input);
     void LoadImage(cv::Mat &input);
+
+    // Wait for all other operations to complete and then return the cv::Mat
+    // corresponding to the output of previously enqueued operations.
     cv::Mat GetOutput();
 
+    // These operations will enqueue the appropriate kernel. They are
+    // non-blocking.
     void Gaussian();
     void Sobel();
     void NonMaxSuppression();
