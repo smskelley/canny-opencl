@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
 #include "imageprocessor.h"
@@ -10,12 +11,15 @@ void onTimerFinish(double time)
     cout << "Took " << time << " milliseconds.\n";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     cv::VideoCapture webcam(0);
     cv::Mat inFrame, grayFrame;
+    bool useGPU = true;
+    if (argc > 1 && strcmp(argv[1], "cpu") == 0)
+        useGPU = false;
 
-    ImageProcessor processor;
+    ImageProcessor processor(useGPU);
     while (true)
     {
         webcam.read(inFrame);
