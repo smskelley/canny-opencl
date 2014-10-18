@@ -98,6 +98,11 @@ cv::Mat ImageProcessor::GetOutput()
     return output;
 }
 
+void ImageProcessor::FinishJobs()
+{
+    queue.finish();
+}
+
 // enqueues the gaussian kernel
 void ImageProcessor::Gaussian()
 {

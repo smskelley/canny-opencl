@@ -54,6 +54,10 @@ class ImageProcessor
     // corresponding to the output of previously enqueued operations.
     cv::Mat GetOutput();
 
+    // Blocking call which finishes all commands in queue. Useful for
+    // benchmarking purposes, so that you can time a subset of an operation.
+    void FinishJobs();
+
     // These operations will enqueue the appropriate kernel. They are
     // non-blocking.
     void Gaussian();

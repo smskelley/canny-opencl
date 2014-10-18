@@ -18,12 +18,17 @@ int main()
     ImageProcessor processor;
     while (true)
     {
-        AutoTimer timer(onTimerFinish);
         webcam.read(inFrame);
         cv::cvtColor(inFrame, grayFrame, cv::COLOR_BGR2GRAY);
 
         processor.LoadImage(grayFrame);
-        processor.Canny();
+
+        processor.FinishJobs();
+        {
+            AutoTimer timer(onTimerFinish);
+            processor.Canny();
+            processor.FinishJobs();
+        }
 
         imshow("canny", processor.GetOutput());
         if (cv::waitKey(30) >= 0)
