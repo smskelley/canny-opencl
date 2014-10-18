@@ -23,17 +23,17 @@ __kernel void sobel_kernel(__global uchar *data,
     size_t col = get_global_id(1);
     size_t pos = row * cols + col;
     
-    // do x derivative
+    // find x and y derivatives
     for (int i = 0; i < 3; i++)
+    {
         for (int j = 0; j < 3; j++)
+        {
             sumx += sobx[i][j] *
                     data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
-
-    // do y derivative
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
             sumy += soby[i][j] *
                     data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+        }
+    }
 
     // The output is now the square root of their squares, but they are
     // constrained to 0 <= value <= 255. Note that hypot is a built in function
