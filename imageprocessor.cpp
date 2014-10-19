@@ -105,7 +105,6 @@ cv::Mat ImageProcessor::GetOutput()
 
     queue.finish();
     assert(output.rows == input.rows && output.cols == input.cols);
-    assert(output.rows == 720 && output.cols == 1280);
     return output;
 }
 
