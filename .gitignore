@@ -32,3 +32,4 @@
 *.out
 *.app
 canny-opencl
+benchmark
