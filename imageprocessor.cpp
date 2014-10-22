@@ -71,9 +71,6 @@ ImageProcessor::ImageProcessor(bool UseGPU)
 
         // currently using the edge kernel as the sobel kernel
         sobel = loadKernel("sobel_kernel.cl", "sobel_kernel");
-
-	// testing
-	hysteresisThresholding = loadKernel("hysthres_kernal.cl", "hysthresh_kernel");
     }
     catch (cl::Error e)
     {
@@ -160,19 +157,6 @@ void ImageProcessor::NonMaxSuppression()
 // enqueues the hysteresisThresholding kernel
 void ImageProcessor::HysteresisThresholding()
 {
-    hysteresisThresholding.setArg(0, prevBuff());
-    hysteresisThresholding.setArg(1, nextBuff());
-    hysteresisThresholding.setArg(2, input.rows);
-    hysteresisThresholding.setArg(3, input.cols);
-
-    queue.enqueueNDRangeKernel(hysteresisThresholding,
-                               cl::NullRange,
-                               cl::NDRange(input.rows,
-                                           input.cols),
-                               cl::NDRange(1, 1),
-                               NULL);
-
-    advanceBuff();
 }
 
 // enqueues all of the canny stages
