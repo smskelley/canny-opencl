@@ -1,4 +1,5 @@
 default:
+	git add .
 	git commit -m $(commit)
 	git status
-	git push origin master
+	git push git@github.com:smskelley/canny-opencl.git master
