@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include "imageprocessor.h"
 
 using namespace std;
@@ -92,6 +93,12 @@ void ImageProcessor::LoadImage(cv::Mat &input)
                             CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                             input.rows * input.cols * input.elemSize(),
                             output.data);
+                            
+    // Initialize the theta buffer
+    theta =  cl::Buffer(context,
+                        CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+                        input.rows * input.cols * input.elemSize(),
+                        output.data);                       
     advanceBuff();
 }
 
@@ -136,8 +143,9 @@ void ImageProcessor::Sobel()
 {
     sobel.setArg(0, prevBuff());
     sobel.setArg(1, nextBuff());
-    sobel.setArg(2, input.rows);
-    sobel.setArg(3, input.cols);
+    sobel.setArg(2, theta);
+    sobel.setArg(3, input.rows);
+    sobel.setArg(4, input.cols);
 
     queue.enqueueNDRangeKernel(sobel,
                                cl::NullRange,
