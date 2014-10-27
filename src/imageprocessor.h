@@ -13,6 +13,7 @@ class ImageProcessor
     // OpenCV Objects
     cv::Mat input;
     cv::Mat output;
+    cv::Mat test_matrix;
 
     // OpenCL Objects
     std::vector<cl::Platform> platforms;
@@ -25,9 +26,12 @@ class ImageProcessor
     cl::Kernel nonMaxSuppression;
     cl::Kernel hysteresisThresholding;
 
+    // Create a buffer to hold the direction angle theta
+    cl::Buffer theta;
+
     // Note that existing code assumes only two buffers exist
     cl::Buffer buffers[2];
-
+    
     // Keeps track of the next buffer to use as a destination. This should
     // not be accessed directly, instead look at using nextBuff/prevBuff.
     size_t bufferIndex = 0;
