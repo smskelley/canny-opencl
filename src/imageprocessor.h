@@ -18,6 +18,7 @@ class ImageProcessor
     // OpenCL Objects
     std::vector<cl::Platform> platforms;
     std::vector<cl::Device> devices;
+    cl::Device selectedDevice;
     cl::Context context;
     cl::CommandQueue queue;
     
@@ -47,6 +48,11 @@ class ImageProcessor
 
     // outputs basic information about the device in use.
     void deviceInfo();
+
+    // returns the "desirable" device. If a discrete GPU is detected, then it
+    // will be preferred over integrated graphics. If devices is empty, then the
+    // this will throw std::out_of_range.
+    cl::Device & findBestDevice();
 
     // Given a filename (without its path) load and return the kernel.
     cl::Kernel loadKernel(std::string filename, std::string kernel_name);

@@ -1,5 +1,7 @@
 #include <cassert>
 #include <cmath>
+#include <regex>
+#include <stdexcept>
 #include "imageprocessor.h"
 
 using namespace std;
@@ -25,13 +27,13 @@ cl::Kernel ImageProcessor::loadKernel(string filename, string kernel_name)
         // If there's a build error, print out the build log to see what
         // exactly the problem was.
         cerr << "Build Status:\t"
-             << program.getBuildInfo<CL_PROGRAM_BUILD_STATUS>(devices[0])
+             << program.getBuildInfo<CL_PROGRAM_BUILD_STATUS>(selectedDevice)
              << endl
              << "Build Options:\t"
-             << program.getBuildInfo<CL_PROGRAM_BUILD_OPTIONS>(devices[0])
+             << program.getBuildInfo<CL_PROGRAM_BUILD_OPTIONS>(selectedDevice)
              << endl
              << "Build Log:\t "
-             << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0])
+             << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(selectedDevice)
              << endl;
     }
 
@@ -43,8 +45,27 @@ cl::Kernel ImageProcessor::loadKernel(string filename, string kernel_name)
 void ImageProcessor::deviceInfo()
 {
     cout << "Device info:" << endl
-         << "Name: " << devices[0].getInfo<CL_DEVICE_NAME>() << endl;
+         << "Name: " << selectedDevice.getInfo<CL_DEVICE_NAME>() << endl;
 
+}
+
+// Returns (hopefully) the discrete GPU in devices. If none are found, then the
+// first GPU is returned.
+cl::Device &ImageProcessor::findBestDevice()
+{
+    if (devices.size() == 0)
+        throw std::out_of_range("No devices in devices vector.");
+    
+    // look for nvidia, amd, or ati. This may yield a false positive for
+    // integrated amd GPUs, but it's better than the current solution.
+    std::regex valid_device("(NVIDIA|AMD|ATI)", std::regex_constants::icase);
+    for (auto &d : devices)
+    {
+        if (std::regex_search(d.getInfo<CL_DEVICE_NAME>(), valid_device))
+            return d;
+    }
+
+    return devices[0];
 }
 
 /***  Public Methods **********************************************************/
@@ -61,8 +82,9 @@ ImageProcessor::ImageProcessor(bool UseGPU)
         else
             platforms[0].getDevices(CL_DEVICE_TYPE_CPU, &devices);
 
+        selectedDevice = findBestDevice();
         context = cl::Context(devices);
-        queue = cl::CommandQueue(context, devices[0]);
+        queue = cl::CommandQueue(context, selectedDevice);
 
         // output device information
         deviceInfo();
