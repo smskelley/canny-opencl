@@ -45,7 +45,8 @@ cl::Kernel ImageProcessor::loadKernel(string filename, string kernel_name)
 void ImageProcessor::deviceInfo()
 {
     cout << "Device info:" << endl
-         << "Name: " << selectedDevice.getInfo<CL_DEVICE_NAME>() << endl;
+         << "Name: " << selectedDevice.getInfo<CL_DEVICE_NAME>() << endl
+         << "Vendor: " << selectedDevice.getInfo<CL_DEVICE_VENDOR>() << endl;
 
 }
 
@@ -61,7 +62,7 @@ cl::Device &ImageProcessor::findBestDevice()
     std::regex valid_device("(NVIDIA|AMD|ATI)", std::regex_constants::icase);
     for (auto &d : devices)
     {
-        if (std::regex_search(d.getInfo<CL_DEVICE_NAME>(), valid_device))
+        if (std::regex_search(d.getInfo<CL_DEVICE_VENDOR>(), valid_device))
             return d;
     }
 
