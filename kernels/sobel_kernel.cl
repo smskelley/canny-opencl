@@ -43,7 +43,12 @@ __kernel void sobel_kernel(__global uchar *data,
     out[pos] = min(255,max(0, (int)hypot(sumx,sumy) ));
 
     // Compute the direction angle theta in radians
+    // atan2(y,x) = arc tan(y/x)
+    // arc tan has a range of (-90, 90) degrees
     angle = atan2(sumy, sumx);
+
+    // Shift the range to (0, 180) degrees by adding 90 degrees
+    angle = angle + PI/2;
     
     // Round the angle to one of four possibilities: 0, 45, 90, 135 degrees
     // then store it in the theta buffer at the proper position
@@ -63,7 +68,7 @@ __kernel void sobel_kernel(__global uchar *data,
     {
         theta[pos] = 135;
     }
-    else
+    else // (angle <= PI)
     {
         theta[pos] = 0;
     }

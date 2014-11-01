@@ -13,7 +13,7 @@ class ImageProcessor
     // OpenCV Objects
     cv::Mat input;
     cv::Mat output;
-    cv::Mat test_matrix;
+    cv::Mat theta_matrix;
 
     // OpenCL Objects
     std::vector<cl::Platform> platforms;
