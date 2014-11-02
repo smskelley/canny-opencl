@@ -8,11 +8,13 @@ LDFLAGS=-L$(CV_PATH)lib/
 CPPFLAGS=-I$(CV_PATH)include/ -std=c++11 
 LDLIBS=-lopencv_core -lopencv_imgproc -lopencv_highgui -framework OpenCL
 
-default: canny-opencl benchmark
+default: canny-opencl benchmark-suite
 
 canny-opencl: canny-opencl.cpp autotimer.o imageprocessor.o
 
-benchmark: benchmark.cpp autotimer.o imageprocessor.o
+benchmark-suite: benchmark-suite.cpp benchmark.o autotimer.o imageprocessor.o
+
+benchmark: benchmark.h benchmark.cpp
 
 autotimer.o: autotimer.h autotimer.cpp
 

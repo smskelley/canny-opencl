@@ -1,42 +1,82 @@
 #include <iostream>
+#include <iomanip>
+#include <string>
+#include <vector>
 #include <cstring>
+#include <cmath>
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
+#include "benchmark.h"
 #include "imageprocessor.h"
 
 using namespace std;
 
-void onTimerFinish(double time)
+
+///////// Public Methods ///////////////////////////////////////////////////////
+void Benchmark::Run()
 {
-    cout << "Took " << time << " milliseconds.\n";
+    runFullAlogirithm();
+    runComponents();
 }
 
-int main(int argc, char *argv[])
+void Benchmark::OutputResults()
 {
-    string path = "images/";
-    string filename = "Great_tit.jpg";
+    auto outputRow = [](string heading, double value) {
+        cout << left << setw(10) << heading << value << endl;
+    };
+    cout << input.filename << endl;
+    outputRow("Average:", results.average);
+    outputRow("StDev:", results.standard_deviation);
+    outputRow("Kpx/ms:", (input.height * input.width) /
+                         (1000 * results.average));
 
-    // if first param is 'cpu', then image processor should use the cpu.
-    bool useGPU = true;
-    if (argc > 1 && strcmp(argv[1], "cpu") == 0)
-        useGPU = false;
+    for (int i = 0; i < results.stage_times.size(); i++)
+        outputRow("Stage " + to_string(i), results.stage_times[i]);
+}
 
-    // Load the image
-    ImageProcessor processor(useGPU);
-    cv::Mat image = cv::imread(path + filename, CV_LOAD_IMAGE_GRAYSCALE);
-    processor.LoadImage(image);
+///////// Private Methods //////////////////////////////////////////////////////
 
-    // Make sure that image is loaded before beginning the benchmark.
-    processor.FinishJobs();
+// Runs the full algorithm 'iteration' times. Finds the average and standard
+// deviation of its runtime.
+void Benchmark::runFullAlogirithm()
+{
+    double total_duration = 0;
 
+    // each iteration duration is squared and then added to squared_durations.
+    double squared_durations = 0;
+
+    // time it however many times
+    for (int i = 0; i < iterations; i++)
     {
-        AutoTimer timer(onTimerFinish);
-        processor.Canny();
+        double duration = 0;
+        processor.LoadImage(image);
+
+        // Make sure that image is loaded before beginning the benchmark.
         processor.FinishJobs();
+        {
+            AutoTimer timer;
+            processor.Canny();
+            processor.FinishJobs();
+            duration = timer.Duration();
+        }
+        total_duration += duration;
+        squared_durations += duration * duration;
     }
 
-    // This is optional. Note that this is saving out to a jpg.
-    cv::imwrite(path + "canny_" + filename, processor.GetOutput());
+    // record the average
+    results.average = total_duration / iterations;
 
-    return 0;
+    // record the standard deviation
+    results.standard_deviation = sqrt(squared_durations / iterations -
+                                      results.average * results.average);
+
+    // write the generated image. Optional, but helps us verify that everything
+    // ran correctly.
+    cv::imwrite(path + "canny_" + input.filename, processor.GetOutput());
+}
+
+// Times each stage separately.
+void Benchmark::runComponents()
+{
+
 }
