@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
             processor.Canny();
             processor.FinishJobs();
         }
-    
+ 
         imshow("canny", processor.GetOutput());
         if (cv::waitKey(30) >= 0)
             break;
