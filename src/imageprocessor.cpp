@@ -103,7 +103,7 @@ void ImageProcessor::LoadImage(cv::Mat &input)
 {
     this->input = input;
     output = cv::Mat(input.rows, input.cols, CV_8UC1);
-    test_matrix = cv::Mat(input.rows, input.cols, CV_8UC1);
+    theta_matrix = cv::Mat(input.rows, input.cols, CV_8UC1);
     nextBuff() = cl::Buffer(context,
                             CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                             input.rows * input.cols * input.elemSize(),
@@ -117,7 +117,7 @@ void ImageProcessor::LoadImage(cv::Mat &input)
     theta =  cl::Buffer(context,
                         CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                         input.rows * input.cols * input.elemSize(),
-                        test_matrix.data);                       
+                        theta_matrix.data);                       
     advanceBuff();
 }
 
@@ -132,6 +132,16 @@ cv::Mat ImageProcessor::GetOutput()
     queue.finish();
     assert(output.rows == input.rows && output.cols == input.cols);
     return output;
+}
+
+cv::Mat ImageProcessor::GetTheta()
+{
+    // copy the theta buffer back
+    queue.enqueueReadBuffer(theta, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            theta_matrix.data);
+    queue.finish();
+    return theta_matrix;
 }
 
 void ImageProcessor::FinishJobs()
