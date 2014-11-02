@@ -66,6 +66,9 @@ class ImageProcessor
     // corresponding to the output of previously enqueued operations.
     cv::Mat GetOutput();
 
+    // Debug function to be able to see what angles are stored in the theta matrix
+    cv::Mat GetTheta();
+    
     // Blocking call which finishes all commands in queue. Useful for
     // benchmarking purposes, so that you can time a subset of an operation.
     void FinishJobs();

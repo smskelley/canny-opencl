@@ -9,8 +9,9 @@ __constant int soby[3][3] = { {-1,-2,-1},
 
 // Sobel kernel. Apply sobx and soby separately, then find the sqrt of their
 //               squares.
-// data: image input data with each pixel taking up 1 byte (8Bit 1Channel)
-// out: image output data (8B1C)
+// data:  image input data with each pixel taking up 1 byte (8Bit 1Channel)
+// out:   image output data (8B1C)
+// theta: angle output data
 __kernel void sobel_kernel(__global uchar *data,
                            __global uchar *out,
                            __global uchar *theta,
@@ -43,13 +44,17 @@ __kernel void sobel_kernel(__global uchar *data,
     out[pos] = min(255,max(0, (int)hypot(sumx,sumy) ));
 
     // Compute the direction angle theta in radians
-    // atan2(y,x) = arc tan(y/x)
-    // arc tan has a range of (-90, 90) degrees
-    angle = atan2(sumy, sumx);
+    // atan2 has a range of (-PI, PI) degrees
+    angle = atan2(sumy,sumx);
 
-    // Shift the range to (0, 180) degrees by adding 90 degrees
-    angle = angle + PI/2;
-    
+    // If the angle is negative, 
+    // shift the range to (0, 2PI) by adding 2PI to the angle, 
+    // then perform modulo operation of 2PI
+    if (angle < 0)
+    {
+        angle = fmod((angle + 2*PI),(2*PI));
+    }
+
     // Round the angle to one of four possibilities: 0, 45, 90, 135 degrees
     // then store it in the theta buffer at the proper position
     if (angle <= PI/8) 
@@ -68,7 +73,23 @@ __kernel void sobel_kernel(__global uchar *data,
     {
         theta[pos] = 135;
     }
-    else // (angle <= PI)
+    else if (angle <= 9*PI/8)
+    {
+        theta[pos] = 0;
+    }
+    else if (angle <= 11*PI/8)
+    {
+        theta[pos] = 45;
+    }
+    else if (angle <= 13*PI/8)
+    {
+        theta[pos] = 90;
+    }
+    else if (angle <= 15*PI/8)
+    {
+        theta[pos] = 135;
+    }
+    else // (angle <= 16*PI/8)
     {
         theta[pos] = 0;
     }

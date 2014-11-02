@@ -138,6 +138,16 @@ cv::Mat ImageProcessor::GetOutput()
     return output;
 }
 
+cv::Mat ImageProcessor::GetTheta()
+{
+    // copy the theta buffer back
+    queue.enqueueReadBuffer(theta, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            theta_matrix.data);
+    queue.finish();
+    return theta_matrix;
+}
+
 void ImageProcessor::FinishJobs()
 {
     queue.finish();
