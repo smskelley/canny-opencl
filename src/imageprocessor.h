@@ -46,9 +46,6 @@ class ImageProcessor
     // to the other buffer right now.
     void advanceBuff() { bufferIndex ^= 1; }
 
-    // outputs basic information about the device in use.
-    void deviceInfo();
-
     // returns the "desirable" device. If a discrete GPU is detected, then it
     // will be preferred over integrated graphics. If devices is empty, then the
     // this will throw std::out_of_range.
@@ -58,6 +55,9 @@ class ImageProcessor
     cl::Kernel loadKernel(std::string filename, std::string kernel_name);
   public:
     ImageProcessor(bool UseGPU = true);
+
+    // outputs basic information about the device in use.
+    void DeviceInfo();
 
     // Note that input matrices are assumed to be 8 bit 1 channel grayscale.
     void LoadImage(cv::Mat &input);
