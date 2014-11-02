@@ -1,3 +1,4 @@
+#pragma once
 //Name: Sean Kelley
 //Date: Sep 22 2014
 //Source File: AutoTimer.h
