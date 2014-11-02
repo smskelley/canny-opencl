@@ -40,16 +40,6 @@ cl::Kernel ImageProcessor::loadKernel(string filename, string kernel_name)
     return cl::Kernel(program, kernel_name.c_str());
 }
 
-
-// outputs basic information about the device in use.
-void ImageProcessor::deviceInfo()
-{
-    cout << "Device info:" << endl
-         << "Name: " << selectedDevice.getInfo<CL_DEVICE_NAME>() << endl
-         << "Vendor: " << selectedDevice.getInfo<CL_DEVICE_VENDOR>() << endl;
-
-}
-
 // Returns (hopefully) the discrete GPU in devices. If none are found, then the
 // first GPU is returned.
 cl::Device &ImageProcessor::findBestDevice()
@@ -86,9 +76,6 @@ ImageProcessor::ImageProcessor(bool UseGPU)
         selectedDevice = findBestDevice();
         context = cl::Context(devices);
         queue = cl::CommandQueue(context, selectedDevice);
-
-        // output device information
-        deviceInfo();
         
         // create and load the kernels
         gaussian = loadKernel("gaussian_kernel.cl", "gaussian_kernel");
@@ -100,6 +87,15 @@ ImageProcessor::ImageProcessor(bool UseGPU)
     {
         cerr << endl << "Error: " << e.what() << " : " << e.err() << endl;
     }
+}
+
+// outputs basic information about the device in use.
+void ImageProcessor::DeviceInfo()
+{
+    cout << "Device info:" << endl
+         << "Name: " << selectedDevice.getInfo<CL_DEVICE_NAME>() << endl
+         << "Vendor: " << selectedDevice.getInfo<CL_DEVICE_VENDOR>() << endl;
+
 }
 
 // load the 8bit 1channel grayscale Mat
