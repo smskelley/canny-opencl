@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
 {
     cv::VideoCapture webcam(0);
     cv::Mat inFrame, grayFrame;
-    cv::Mat angle_matrix;
     bool useGPU = true;
     if (argc > 1 && strcmp(argv[1], "cpu") == 0)
         useGPU = false;
@@ -35,9 +34,6 @@ int main(int argc, char *argv[])
             processor.FinishJobs();
         }
     
-        angle_matrix = processor.GetTheta();
-        cout << endl << endl << angle_matrix << endl << endl;        
-
         imshow("canny", processor.GetOutput());
         if (cv::waitKey(30) >= 0)
             break;
