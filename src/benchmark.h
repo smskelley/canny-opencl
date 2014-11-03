@@ -17,7 +17,7 @@ struct InputImage
         height(_height),
         width(_width) { }
     
-    double MegaPixels() { return (1.0 * height * width) / ( 1024 * 1024); }
+    double MegaPixels() { return (height * width) / 1000000.0; }
 };
 
 // Holds all results collected. In general, these results are averaged over
