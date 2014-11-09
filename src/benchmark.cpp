@@ -78,5 +78,38 @@ void Benchmark::runFullAlogirithm()
 // Times each stage separately.
 void Benchmark::runComponents()
 {
+    processor.LoadImage(image);
+    processor.FinishJobs();
 
+    // Stage 1: Gaussian Blur
+    {
+        AutoTimer timer;
+        processor.Gaussian();
+        processor.FinishJobs();
+        results.stage_times.push_back(timer.Duration());
+    }
+
+    // Stage 2: Sobel Filtering
+    {
+        AutoTimer timer;
+        processor.Sobel();
+        processor.FinishJobs();
+        results.stage_times.push_back(timer.Duration());
+    }
+
+    // Stage 3: Nonmaximum Suppression
+    {
+        AutoTimer timer;
+        processor.NonMaxSuppression();
+        processor.FinishJobs();
+        results.stage_times.push_back(timer.Duration());
+    }
+
+    // Stage 4: Hysteresis Thresholding
+    {
+        AutoTimer timer;
+        processor.HysteresisThresholding();
+        processor.FinishJobs();
+        results.stage_times.push_back(timer.Duration());
+    }
 }
