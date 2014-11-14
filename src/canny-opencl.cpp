@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
             processor.FinishJobs();
         }
  
-        imshow("canny", processor.GetOutput());
+        imshow("canny", processor.GetGaussian());
         if (cv::waitKey(30) >= 0)
             break;
     }

@@ -14,7 +14,13 @@ class ImageProcessor
     // OpenCV Objects
     cv::Mat input;
     cv::Mat output;
+
+    cv::Mat image_matrix;    
+    cv::Mat gaussian_matrix;
+    cv::Mat sobel_matrix;
     cv::Mat theta_matrix;
+    cv::Mat nonMaxSuppression_matrix;
+    cv::Mat hysteresisThresholding_matrix; 
 
     // OpenCL Objects
     std::vector<cl::Platform> platforms;
@@ -29,7 +35,12 @@ class ImageProcessor
     cl::Kernel hysteresisThresholding;
 
     // Create a buffer to hold the direction angle theta
-    cl::Buffer theta;
+    cl::Buffer image_buffer;
+    cl::Buffer gaussian_buffer;
+    cl::Buffer sobel_buffer;
+    cl::Buffer theta_buffer;
+    cl::Buffer nonMaxSuppression_buffer;
+    cl::Buffer hysteresisThresholding_buffer;
 
     // Note that existing code assumes only two buffers exist
     cl::Buffer buffers[2];
@@ -67,8 +78,11 @@ class ImageProcessor
     // corresponding to the output of previously enqueued operations.
     cv::Mat GetOutput();
 
-    // Debug function to be able to see what angles are stored in the theta matrix
+    cv::Mat GetGaussian();
+    cv::Mat GetSobel();
     cv::Mat GetTheta();
+    cv::Mat GetNonMaxSuppression();
+    cv::Mat GetHysteresisThresholding();
     
     // Blocking call which finishes all commands in queue. Useful for
     // benchmarking purposes, so that you can time a subset of an operation.

@@ -82,6 +82,8 @@ ImageProcessor::ImageProcessor(bool UseGPU)
 
         // currently using the edge kernel as the sobel kernel
         sobel = loadKernel("sobel_kernel.cl", "sobel_kernel");
+
+        nonMaxSuppression = loadKernel("non_max_supp_kernel.cl", "non_max_supp_kernel");
     }
     catch (cl::Error e)
     {
@@ -99,11 +101,20 @@ void ImageProcessor::DeviceInfo()
 }
 
 // load the 8bit 1channel grayscale Mat
-void ImageProcessor::LoadImage(cv::Mat &input)
+void ImageProcessor::LoadImage(cv::Mat &image)
 {
-    this->input = input;
-    output = cv::Mat(input.rows, input.cols, CV_8UC1);
-    theta_matrix = cv::Mat(input.rows, input.cols, CV_8UC1);
+    //this->input = input;
+    image_matrix = image;
+    output = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+
+    // Initialize matrices created by Jared
+    gaussian_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+    sobel_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+    theta_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+    nonMaxSuppression_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+    hysteresisThresholding_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
+
+
     nextBuff() = cl::Buffer(context,
                             CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                             input.rows * input.cols * input.elemSize(),
@@ -113,12 +124,28 @@ void ImageProcessor::LoadImage(cv::Mat &input)
                             input.rows * input.cols * input.elemSize(),
                             output.data);
                             
-    // Initialize the theta buffer
-    theta =  cl::Buffer(context,
+    // Initialize buffers created by Jared
+    gaussian_buffer =  cl::Buffer(context,
+                        CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+                        image_matrix.rows * image_matrix.cols * image_matrix.elemSize(),
+                        gaussian_matrix.data);                       
+    sobel_buffer =  cl::Buffer(context,
+                        CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+                        image_matrix.rows * image_matrix.cols * image_matrix.elemSize(),
+                        sobel_matrix.data);                       
+    theta_buffer =  cl::Buffer(context,
                         CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                         input.rows * input.cols * input.elemSize(),
                         theta_matrix.data);                       
-    advanceBuff();
+    nonMaxSuppression_buffer =  cl::Buffer(context,
+                                CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+                                input.rows * input.cols * input.elemSize(),
+                                nonMaxSuppression_matrix.data);                       
+    hysteresisThresholding_buffer =  cl::Buffer(context,
+                                     CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
+                                     input.rows * input.cols * input.elemSize(),
+                                     hysteresisThresholding_matrix.data);                       
+    //advanceBuff();
 }
 
 // copies the buffer back and returns it. this is a blocking call.
@@ -134,14 +161,54 @@ cv::Mat ImageProcessor::GetOutput()
     return output;
 }
 
+cv::Mat ImageProcessor::GetGaussian()
+{
+    // copy the gaussian buffer back
+    queue.enqueueReadBuffer(gaussian_buffer, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            gaussian_matrix.data);
+    queue.finish();
+    return gaussian_matrix;
+}
+
+cv::Mat ImageProcessor::GetSobel()
+{
+    // copy the sobel buffer back
+    queue.enqueueReadBuffer(sobel_buffer, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            sobel_matrix.data);
+    queue.finish();
+    return sobel_matrix;
+}
+
 cv::Mat ImageProcessor::GetTheta()
 {
     // copy the theta buffer back
-    queue.enqueueReadBuffer(theta, CL_TRUE, 0,
+    queue.enqueueReadBuffer(theta_buffer, CL_TRUE, 0,
                             input.rows * input.cols * input.elemSize(),
                             theta_matrix.data);
     queue.finish();
     return theta_matrix;
+}
+
+cv::Mat ImageProcessor::GetNonMaxSuppression()
+{
+    // copy the NonMaxSuppression buffer back
+    queue.enqueueReadBuffer(nonMaxSuppression_buffer, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            nonMaxSuppression_matrix.data);
+    queue.finish();
+    return theta_matrix;
+}
+
+cv::Mat ImageProcessor::GetHysteresisThresholding()
+{
+    // copy the hysteresisThresholding buffer back
+    queue.enqueueReadBuffer(hysteresisThresholding_buffer, CL_TRUE, 0,
+                            input.rows * input.cols * input.elemSize(),
+                            hysteresisThresholding_matrix.data);
+    queue.finish();
+    return hysteresisThresholding_matrix;
 }
 
 void ImageProcessor::FinishJobs()
@@ -152,8 +219,8 @@ void ImageProcessor::FinishJobs()
 // enqueues the gaussian kernel
 void ImageProcessor::Gaussian()
 {
-    gaussian.setArg(0, prevBuff());
-    gaussian.setArg(1, nextBuff());
+    gaussian.setArg(0, input);
+    gaussian.setArg(1, gaussian_buffer);
     gaussian.setArg(2, input.rows);
     gaussian.setArg(3, input.cols);
 
@@ -164,15 +231,15 @@ void ImageProcessor::Gaussian()
                                cl::NDRange(1, 1),
                                NULL);
 
-    advanceBuff();
+    //advanceBuff();
 }
 
 // enqueues the sobel kernel
 void ImageProcessor::Sobel()
 {
-    sobel.setArg(0, prevBuff());
-    sobel.setArg(1, nextBuff());
-    sobel.setArg(2, theta);
+    sobel.setArg(0, gaussian_buffer);
+    sobel.setArg(1, sobel_buffer);
+    sobel.setArg(2, theta_buffer);
     sobel.setArg(3, input.rows);
     sobel.setArg(4, input.cols);
 
@@ -183,12 +250,26 @@ void ImageProcessor::Sobel()
                                cl::NDRange(1, 1),
                                NULL);
 
-    advanceBuff();
+    //advanceBuff();
 }
 
 // enqueues the nonMaxSuppression kernel
 void ImageProcessor::NonMaxSuppression()
 {
+    nonMaxSuppression.setArg(0, sobel_buffer);
+    nonMaxSuppression.setArg(1, nonMaxSuppression_buffer);
+    nonMaxSuppression.setArg(2, theta_buffer);
+    nonMaxSuppression.setArg(3, input.rows);
+    nonMaxSuppression.setArg(4, input.cols);
+
+    queue.enqueueNDRangeKernel(nonMaxSuppression,
+                               cl::NullRange,
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
+                               cl::NDRange(1, 1),
+                               NULL);
+
+    //advanceBuff();
 }
 
 // enqueues the hysteresisThresholding kernel
