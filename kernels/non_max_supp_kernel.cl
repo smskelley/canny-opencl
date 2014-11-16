@@ -24,6 +24,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
     const size_t W = row * cols + (col - 1);
     const size_t NW = (row - 1) * cols + (col - 1);
 
+    out[POS] = data[POS];
     switch (theta[POS])
     {
         // A gradient angle of 0 degrees = an edge that is North/South
@@ -62,7 +63,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
                 
         // A gradient angle of 45 degrees = an edge that is NW/SE
         // Check neighbors to the NE and SW
-        case 45: ;
+        case 45:
             // check if neighbor NE of me has the same gradient angle
             if (theta[NE] == 45)
             {
@@ -163,7 +164,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
             break;
                     
         defaut:
-            printf("Hit default case.\n");
+            out[POS] = data[POS];
             break;
     } 
 }
