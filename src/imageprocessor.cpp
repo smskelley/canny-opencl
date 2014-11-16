@@ -216,6 +216,6 @@ void ImageProcessor::Canny()
 {
     Gaussian();
     Sobel();
-//    NonMaxSuppression();
+    NonMaxSuppression();
     HysteresisThresholding();
 }
