@@ -100,6 +100,8 @@ void ImageProcessor::DeviceInfo()
 
 }
 
+// I don't think this function is working properly as is.
+// I'm not sure exactly how to fix it.
 // load the 8bit 1channel grayscale Mat
 void ImageProcessor::LoadImage(cv::Mat &image)
 {
@@ -107,14 +109,14 @@ void ImageProcessor::LoadImage(cv::Mat &image)
     image_matrix = image;
     output = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
 
-    // Initialize matrices created by Jared
+    // Initialize matrices for individual kernels and the theta matrix
     gaussian_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
     sobel_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
     theta_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
     nonMaxSuppression_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
     hysteresisThresholding_matrix = cv::Mat(image_matrix.rows, image_matrix.cols, CV_8UC1);
 
-
+    // These probably need to be modified or re-implemented?
     nextBuff() = cl::Buffer(context,
                             CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                             input.rows * input.cols * input.elemSize(),
@@ -124,7 +126,7 @@ void ImageProcessor::LoadImage(cv::Mat &image)
                             input.rows * input.cols * input.elemSize(),
                             output.data);
                             
-    // Initialize buffers created by Jared
+    // Initialize buffers for individual kernels and the theta matrix
     gaussian_buffer =  cl::Buffer(context,
                         CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                         image_matrix.rows * image_matrix.cols * image_matrix.elemSize(),
@@ -145,7 +147,8 @@ void ImageProcessor::LoadImage(cv::Mat &image)
                                      CL_MEM_WRITE_ONLY | CL_MEM_USE_HOST_PTR,
                                      input.rows * input.cols * input.elemSize(),
                                      hysteresisThresholding_matrix.data);                       
-    //advanceBuff();
+    //advanceBuff();    // commented out because this function has not been updated to 
+                        // take into account matrices/buffers for individual kernels
 }
 
 // copies the buffer back and returns it. this is a blocking call.
@@ -161,6 +164,7 @@ cv::Mat ImageProcessor::GetOutput()
     return output;
 }
 
+// copies the Gaussian buffer back and returns it.
 cv::Mat ImageProcessor::GetGaussian()
 {
     // copy the gaussian buffer back
@@ -171,6 +175,7 @@ cv::Mat ImageProcessor::GetGaussian()
     return gaussian_matrix;
 }
 
+// copies the Sobel buffer back and returns it.
 cv::Mat ImageProcessor::GetSobel()
 {
     // copy the sobel buffer back
@@ -181,6 +186,7 @@ cv::Mat ImageProcessor::GetSobel()
     return sobel_matrix;
 }
 
+// copies the theta buffer back and returs it.
 cv::Mat ImageProcessor::GetTheta()
 {
     // copy the theta buffer back
@@ -191,6 +197,7 @@ cv::Mat ImageProcessor::GetTheta()
     return theta_matrix;
 }
 
+// copies the NonMaxSuppression buffer back and returns it.
 cv::Mat ImageProcessor::GetNonMaxSuppression()
 {
     // copy the NonMaxSuppression buffer back
@@ -201,6 +208,7 @@ cv::Mat ImageProcessor::GetNonMaxSuppression()
     return theta_matrix;
 }
 
+// copies the HysteresisThresholding buffer back and returns it.
 cv::Mat ImageProcessor::GetHysteresisThresholding()
 {
     // copy the hysteresisThresholding buffer back
