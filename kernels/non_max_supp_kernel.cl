@@ -30,18 +30,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the East and West
         case 0:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[E])
-            {
-                out[POS] = 0;
-            }
-            // otherwise, copy my value to the output buffer
-            else
-            {
-                out[POS] = data[POS];
-            }
-                    
-            // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[W])
+            if (data[POS] <= data[E] || data[POS] <= data[W])
             {
                 out[POS] = 0;
             }
@@ -56,18 +45,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the NE and SW
         case 45:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[NE])
-            {
-                out[POS] = 0;
-            }
-            // otherwise, copy my value to the output buffer
-            else
-            {
-                out[POS] = data[POS];
-            }
-                    
-            // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[SW])
+            if (data[POS] <= data[NE] || data[POS] <= data[SW])
             {
                 out[POS] = 0;
             }
@@ -82,7 +60,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the North and South
         case 90: ;
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[N])
+            if (data[POS] <= data[N] || data[POS] <= data[S])
             {
                 out[POS] = 0;
             }
@@ -90,17 +68,6 @@ __kernel void non_max_supp_kernel(__global uchar *data,
             else
             {
                 out[POS] = data[POS];
-            }
-                    
-            // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[S])
-            {
-                out[POS] = 0;
-            }
-            // otherwise, copy my value to the output buffer
-            else
-            {
-                 out[POS] = data[POS];
             }
             break;
                     
@@ -108,18 +75,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the NW and SE
         case 135:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[NW])
-            {
-                out[POS] = 0;
-            }
-            // otherwise, copy my value to the output buffer
-            else
-            {
-                out[POS] = data[POS];
-            }
-                    
-            // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[SE])
+            if (data[POS] <= data[NW] || data[POS] <= data[SE])
             {
                 out[POS] = 0;
             }
