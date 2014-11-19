@@ -21,4 +21,4 @@ autotimer.o: autotimer.h autotimer.cpp
 imageprocessor.o: imageprocessor.h imageprocessor.cpp
 
 clean:
-	rm *.o canny-opencl benchmark
+	rm *.o canny-opencl benchmark-suite
