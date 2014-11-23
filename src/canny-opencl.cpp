@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
 #include "imageprocessor.h"
+#include "openclimageprocessor.h"
 
 using namespace std;
 
@@ -19,22 +20,22 @@ int main(int argc, char *argv[])
     if (argc > 1 && strcmp(argv[1], "cpu") == 0)
         useGPU = false;
 
-    ImageProcessor processor(useGPU);
+    unique_ptr<ImageProcessor> processor(new OpenclImageProcessor(useGPU));
     while (true)
     {
         webcam.read(inFrame);
         cv::cvtColor(inFrame, grayFrame, cv::COLOR_BGR2GRAY);
 
-        processor.LoadImage(grayFrame);
+        processor->LoadImage(grayFrame);
 
-        processor.FinishJobs();
+        processor->FinishJobs();
         {
             AutoTimer timer(onTimerFinish);
-            processor.Canny();
-            processor.FinishJobs();
+            processor->Canny();
+            processor->FinishJobs();
         }
  
-        imshow("canny", processor.GetOutput());
+        imshow("canny", processor->GetOutput());
         if (cv::waitKey(30) >= 0)
             break;
     }

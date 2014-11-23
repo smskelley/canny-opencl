@@ -49,14 +49,14 @@ void Benchmark::runFullAlogirithm()
     for (int i = 0; i < iterations; i++)
     {
         double duration = 0;
-        processor.LoadImage(image);
+        processor->LoadImage(image);
 
         // Make sure that image is loaded before beginning the benchmark.
-        processor.FinishJobs();
+        processor->FinishJobs();
         {
             AutoTimer timer;
-            processor.Canny();
-            processor.FinishJobs();
+            processor->Canny();
+            processor->FinishJobs();
             duration = timer.Duration();
         }
         total_duration += duration;
@@ -72,44 +72,44 @@ void Benchmark::runFullAlogirithm()
 
     // write the generated image. Optional, but helps us verify that everything
     // ran correctly.
-    cv::imwrite(path + "canny_" + input.filename, processor.GetOutput());
+    cv::imwrite(path + "canny_" + input.filename, processor->GetOutput());
 }
 
 // Times each stage separately.
 void Benchmark::runComponents()
 {
-    processor.LoadImage(image);
-    processor.FinishJobs();
+    processor->LoadImage(image);
+    processor->FinishJobs();
 
     // Stage 1: Gaussian Blur
     {
         AutoTimer timer;
-        processor.Gaussian();
-        processor.FinishJobs();
+        processor->Gaussian();
+        processor->FinishJobs();
         results.stage_times.push_back(timer.Duration());
     }
 
     // Stage 2: Sobel Filtering
     {
         AutoTimer timer;
-        processor.Sobel();
-        processor.FinishJobs();
+        processor->Sobel();
+        processor->FinishJobs();
         results.stage_times.push_back(timer.Duration());
     }
 
     // Stage 3: Nonmaximum Suppression
     {
         AutoTimer timer;
-        processor.NonMaxSuppression();
-        processor.FinishJobs();
+        processor->NonMaxSuppression();
+        processor->FinishJobs();
         results.stage_times.push_back(timer.Duration());
     }
 
     // Stage 4: Hysteresis Thresholding
     {
         AutoTimer timer;
-        processor.HysteresisThresholding();
-        processor.FinishJobs();
+        processor->HysteresisThresholding();
+        processor->FinishJobs();
         results.stage_times.push_back(timer.Duration());
     }
 }
