@@ -1,4 +1,0 @@
-default:
-	git commit -m $(commit)
-	git status
-	git push origin master

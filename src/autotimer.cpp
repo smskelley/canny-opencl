@@ -6,7 +6,7 @@
 //Class: B424
 #include <chrono>
 #include <functional>
-#include "AutoTimer.h"
+#include "autotimer.h"
 
 using namespace std;
 
