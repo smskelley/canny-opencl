@@ -35,7 +35,7 @@ struct ResultSet
 // implementation). Probably turn this into an abstract base and derive from it.
 class Benchmark
 {
-    ImageProcessor processor;
+    std::shared_ptr<ImageProcessor> processor;
     cv::Mat image;
     InputImage input;
     ResultSet results;
@@ -46,11 +46,11 @@ class Benchmark
     void runComponents();
 
 public:
-    Benchmark(std::string _path, InputImage _input,
-              bool _useGPU, int _iterations) :
+    Benchmark(std::shared_ptr<ImageProcessor> _processor, std::string _path,
+              InputImage _input, int _iterations) :
         path(_path),
         input(_input),
-        processor(ImageProcessor(_useGPU)),
+        processor(_processor),
         iterations(_iterations)
     {
         image = cv::imread(path + input.filename,

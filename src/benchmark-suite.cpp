@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include "benchmark.h"
+#include "imageprocessor.h"
+#include "openclimageprocessor.h"
 
 using namespace std;
 
@@ -21,7 +23,8 @@ int main(int argc, char *argv[])
 
     for (auto image : input_images)
     {
-        Benchmark benchmark(IMG_PATH, image, useGPU, 3);
+        Benchmark benchmark(shared_ptr<ImageProcessor>(new OpenclImageProcessor(useGPU)),
+                            IMG_PATH, image, 3);
         benchmark.Run();
         benchmark.OutputResults();
         cout << endl;
