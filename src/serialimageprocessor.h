@@ -1,3 +1,4 @@
+#include <cmath>
 #include <opencv2/highgui/highgui.hpp>
 #include "imageprocessor.h"
 //#include <opencv2/imgproc/imgproc.hpp>
