@@ -5,10 +5,13 @@
 #include "imageprocessor.h"
 #include "openclimageprocessor.h"
 #include "serialimageprocessor.h"
+#include "cvimageprocessor.h"
 
 using namespace std;
 
 const string IMG_PATH = "images/";
+
+void CvBenchmark(string filename);
 
 int main(int argc, char *argv[])
 {
@@ -36,6 +39,11 @@ int main(int argc, char *argv[])
         benchmarks.push_back(
             Benchmark("Serial",
             shared_ptr<ImageProcessor>(new SerialImageProcessor()),
+            IMG_PATH, image, 3));
+
+        benchmarks.push_back(
+            Benchmark("OpenCV",
+            shared_ptr<ImageProcessor>(new CvImageProcessor()),
             IMG_PATH, image, 3));
 
     }
