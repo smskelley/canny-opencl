@@ -18,7 +18,7 @@ __kernel void gaussian_kernel(__global uchar *data,
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
             sum += gaus[i][j] *
-                   data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+                   data[ (i+row+-1)*cols + (j+col+-1) ];
 
     out[pos] = min(255,max(0,sum));
 }
