@@ -269,7 +269,8 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data,
 void SerialImageProcessor::HysteresisThresholding()
 {
     HysteresisThresholding(prevBuff(), nextBuff());
-    advanceBuff();
+    // commented out until HysteresisThresholding is implemented
+    //advanceBuff();
 }
 
 void SerialImageProcessor::HysteresisThresholding(cv::Mat data, cv::Mat out)
