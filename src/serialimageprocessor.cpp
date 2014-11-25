@@ -1,5 +1,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <algorithm>
+#include <iostream>
 #include "serialimageprocessor.h"
 
 using namespace std;
@@ -21,33 +22,59 @@ const int soby[3][3] = { {-1,-2,-1},
                          { 0, 0, 0},
                          { 1, 2, 1} };
 
+void SerialImageProcessor::LoadImage(cv::Mat &input)
+{
+    ImageProcessor::LoadImage(input);
+    nextBuff() = input;
+    prevBuff() = cv::Mat(input.rows, input.cols, CV_8UC1);
+    theta = cv::Mat(input.rows, input.cols, CV_8UC1);
+    advanceBuff();
+}
+
+cv::Mat SerialImageProcessor::GetOutput()
+{
+    return prevBuff();
+}
+
 
 // These methods are blocking calls which will perform what their name
 // implies
+void SerialImageProcessor::Gaussian()
+{
+    Gaussian(prevBuff(), nextBuff());
+    advanceBuff();
+}
+
 void SerialImageProcessor::Gaussian(cv::Mat data, cv::Mat out)
 {
-    int sum = 0;
     size_t rows = data.rows;
     size_t cols = data.cols;
 
-    
     // iterate over the rows of the photo matrix
     for (int row = 1; row < rows - 1; row++)
     {
         // iterate over the columns of the photo matrix
         for (int col = 1; col < cols - 1; col++)
         {
+            int sum = 0;
+
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
                     sum += gaus[i][j] *
-                           data.at<uchar>(col + i - 1, row + j - 1);
+                           data.at<uchar>(row + j - 1, col + i - 1);
                 }
             }
-            out.at<uchar>(row,col) = min(255,max(0,sum));
+            out.at<uchar>(row, col) = min(255,max(0,sum));
         }
     }
+}
+
+void SerialImageProcessor::Sobel()
+{
+    Sobel(prevBuff(), nextBuff(), theta);
+    advanceBuff();
 }
 
 void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta)
@@ -55,7 +82,6 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta)
     // collect sums separately. we're storing them into floats because that
     // is what hypot and atan2 will expect.
     const float PI = 3.14159265;
-    float sumx = 0, sumy = 0, angle = 0;
     size_t rows = data.rows;
     size_t cols = data.cols;
 
@@ -66,23 +92,24 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta)
         // iterate over the columns of the photo matrix
         for (int col = 1; col < cols - 1; col++)
         {
+            float sumx = 0, sumy = 0, angle = 0;
             // find x and y derivatives
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
                 {
                     sumx += sobx[i][j] *
-                            data.at<uchar>(col + i - 1, row + j - 1);
+                            data.at<uchar>(row + j - 1, col + i - 1);
                     sumy += soby[i][j] *
-                            data.at<uchar>(col + i - 1, row + j - 1);
+                            data.at<uchar>(row + j - 1, col + i - 1);
                 }
             }
             
             // The output is now the square root of their squares, but they are
             // constrained to 0 <= value <= 255. Note that hypot is a built in
             // function defined as: hypot(x,y) = sqrt(x*x, y*y).
-            out.at<uchar>(row,col) = min(255,max(0, (int)hypot(sumx,sumy) ));
-            
+            out.at<uchar>(row,col) = min(255, max(0, (int)hypot(sumx,sumy) ));
+
             // Compute the direction angle theta in radians
             // atan2 has a range of (-PI, PI) degrees
             angle = atan2(sumy,sumx);
@@ -137,7 +164,15 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta)
     }
 }
 
-void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat theta)
+void SerialImageProcessor::NonMaxSuppression()
+{
+    NonMaxSuppression(prevBuff(), nextBuff(), theta);
+    advanceBuff();
+}
+
+void SerialImageProcessor::NonMaxSuppression(cv::Mat data,
+                                             cv::Mat out,
+                                             cv::Mat theta)
 {
     size_t rows = data.rows;
     size_t cols = data.cols;
@@ -161,9 +196,6 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat 
             const unsigned char DATA_NW = data.at<uchar>(row-1,col-1);
             const unsigned char THETA_POS = theta.at<uchar>(row,col);
             
-            unsigned char out_pos = out.at<uchar>(row,col);
-
-            
             switch (THETA_POS)
             {
                 // A gradient angle of 0 degrees = an edge that is North/South
@@ -172,12 +204,12 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat 
                     // supress me if my neighbor has larger magnitude
                     if (DATA_POS <= DATA_E || DATA_POS <= DATA_W)
                     {
-                        out_pos = 0;
+                        out.at<uchar>(row,col) = 0;
                     }
                     // otherwise, copy my value to the output buffer
                     else
                     {
-                        out_pos = DATA_POS;
+                        out.at<uchar>(row,col) = DATA_POS;
                     }
                     break;
                     
@@ -187,27 +219,27 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat 
                     // supress me if my neighbor has larger magnitude
                     if (DATA_POS <= DATA_NE || DATA_POS <= DATA_SW)
                     {
-                        out_pos = 0;
+                        out.at<uchar>(row,col) = 0;
                     }
                     // otherwise, copy my value to the output buffer
                     else
                     {
-                        out_pos = DATA_POS;
+                        out.at<uchar>(row,col) = DATA_POS;
                     }
                     break;
                     
                 // A gradient angle of 90 degrees = an edge that is E/W
-                // Check neighbors to the North and South
+                // Check neighbors to the North and South.
                 case 90:
                     // supress me if my neighbor has larger magnitude
                     if (DATA_POS <= DATA_N || DATA_POS <= DATA_S)
                     {
-                        out_pos = 0;
+                        out.at<uchar>(row,col) = 0;
                     }
                     // otherwise, copy my value to the output buffer
                     else
                     {
-                        out_pos = DATA_POS;
+                        out.at<uchar>(row,col) = DATA_POS;
                     }
                     break;
                     
@@ -217,17 +249,17 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat 
                     // supress me if my neighbor has larger magnitude
                     if (DATA_POS <= DATA_NW || DATA_POS <= DATA_SE)
                     {
-                        out_pos = 0;
+                        out.at<uchar>(row,col) = 0;
                     }
                     // otherwise, copy my value to the output buffer
                     else
                     {
-                        out_pos = DATA_POS;
+                        out.at<uchar>(row,col) = DATA_POS;
                     }
                     break;
                     
                 defaut:
-                    out_pos = DATA_POS;
+                    out.at<uchar>(row,col) = DATA_POS;
                     break;
             } 
         }
@@ -236,5 +268,12 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat 
 
 void SerialImageProcessor::HysteresisThresholding()
 {
+    HysteresisThresholding(prevBuff(), nextBuff());
+    advanceBuff();
+}
+
+void SerialImageProcessor::HysteresisThresholding(cv::Mat data, cv::Mat out)
+{
 
 }
+
