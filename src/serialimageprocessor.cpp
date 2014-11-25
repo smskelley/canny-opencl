@@ -1,5 +1,8 @@
 #include <opencv2/highgui/highgui.hpp>
+#include <algorithm>
 #include "serialimageprocessor.h"
+
+using namespace std;
 
 SerialImageProcessor::SerialImageProcessor()
 {
@@ -38,10 +41,8 @@ void SerialImageProcessor::Gaussian(cv::Mat data, cv::Mat out)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    // SEAN FIX ME
                     sum += gaus[i][j] *
-                    data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
-                    
+                           data.at<uchar>(col + i - 1, row + j - 1);
                 }
             }
             out.at<uchar>(row,col) = min(255,max(0,sum));
@@ -70,11 +71,10 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta)
             {
                 for (int j = 0; j < 3; j++)
                 {
-                    // SEAN FIX ME PLEASE
                     sumx += sobx[i][j] *
-                    data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+                            data.at<uchar>(col + i - 1, row + j - 1);
                     sumy += soby[i][j] *
-                    data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+                            data.at<uchar>(col + i - 1, row + j - 1);
                 }
             }
             
