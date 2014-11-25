@@ -1,8 +1,10 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "benchmark.h"
 #include "imageprocessor.h"
 #include "openclimageprocessor.h"
+#include "serialimageprocessor.h"
 
 using namespace std;
 
@@ -10,21 +12,37 @@ const string IMG_PATH = "images/";
 
 int main(int argc, char *argv[])
 {
-    // if first param is 'cpu', then image processor should use the cpu.
-    bool useGPU = true;
-    if (argc > 1 && strcmp(argv[1], "cpu") == 0)
-        useGPU = false;
-
+    vector<Benchmark> benchmarks;
     vector<InputImage> input_images {
         InputImage("Great_Tit.jpg", 2948, 2057),
         InputImage("hs-2004-07-a-full_jpg.jpg", 6200, 6200)
     };
 
 
+    // compile a list of all benchmarks to run.
     for (auto image : input_images)
     {
-        Benchmark benchmark(shared_ptr<ImageProcessor>(new OpenclImageProcessor(useGPU)),
-                            IMG_PATH, image, 3);
+        // OpenCL GPU & CPU benchmarks
+        benchmarks.push_back(
+            Benchmark("OpenCL GPU",
+            shared_ptr<ImageProcessor>(new OpenclImageProcessor(true)),
+            IMG_PATH, image, 3));
+
+        benchmarks.push_back(
+            Benchmark("OpenCL CPU",
+            shared_ptr<ImageProcessor>(new OpenclImageProcessor(false)),
+            IMG_PATH, image, 3));
+
+        benchmarks.push_back(
+            Benchmark("Serial",
+            shared_ptr<ImageProcessor>(new SerialImageProcessor()),
+            IMG_PATH, image, 3));
+
+    }
+    
+    // Run all benchmarks
+    for (auto benchmark : benchmarks)
+    {
         benchmark.Run();
         benchmark.OutputResults();
         cout << endl;
