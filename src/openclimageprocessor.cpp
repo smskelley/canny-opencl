@@ -86,6 +86,8 @@ OpenclImageProcessor::OpenclImageProcessor(bool UseGPU)
 
         nonMaxSuppression = loadKernel("non_max_supp_kernel.cl",
                                        "non_max_supp_kernel");
+        
+        hysteresisThresholding = loadKernel("hyst_kernel.cl", "hyst_kernel");
     }
     catch (cl::Error e)
     {
@@ -210,6 +212,19 @@ void OpenclImageProcessor::NonMaxSuppression()
 // enqueues the hysteresisThresholding kernel
 void OpenclImageProcessor::HysteresisThresholding()
 {
+    hysteresisThresholding.setArg(0, prevBuff());
+    hysteresisThresholding.setArg(1, nextBuff());
+    hysteresisThresholding.setArg(2, input.rows);
+    hysteresisThresholding.setArg(3, input.cols);
+    
+    queue.enqueueNDRangeKernel(hysteresisThresholding,
+                               cl::NullRange,
+                               cl::NDRange(input.rows,
+                                           input.cols),
+                               cl::NDRange(1, 1),
+                               NULL);
+    
+    advanceBuff();
 }
 
 // enqueues all of the canny stages
