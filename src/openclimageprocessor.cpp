@@ -152,9 +152,9 @@ void OpenclImageProcessor::Gaussian()
     gaussian.setArg(3, input.cols);
 
     queue.enqueueNDRangeKernel(gaussian,
-                               cl::NullRange,
-                               cl::NDRange(input.rows,
-                                           input.cols),
+                               cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
                                cl::NDRange(1, 1),
                                NULL);
 
@@ -171,9 +171,9 @@ void OpenclImageProcessor::Sobel()
     sobel.setArg(4, input.cols);
 
     queue.enqueueNDRangeKernel(sobel,
-                               cl::NullRange,
-                               cl::NDRange(input.rows,
-                                           input.cols),
+                               cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
                                cl::NDRange(1, 1),
                                NULL);
 
