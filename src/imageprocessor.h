@@ -9,7 +9,6 @@ class ImageProcessor
     // OpenCV Objects
     cv::Mat input;
     cv::Mat output;
-    cv::Mat theta_matrix;
 
   public:
     ImageProcessor() { }
