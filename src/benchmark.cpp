@@ -21,17 +21,25 @@ void Benchmark::Run()
 
 void Benchmark::OutputResults()
 {
-    auto outputRow = [](string heading, double value) {
+    // I wish these could be merged via a templated lambda, but that doesn't
+    // exist.
+    auto outputDouble = [](string heading, double value) {
         cout << left << setw(10) << heading << value << endl;
     };
-    cout << input.filename << endl;
-    outputRow("Average:", results.average);
-    outputRow("StDev:", results.standard_deviation);
-    outputRow("Kpx/ms:", (input.height * input.width) /
+
+    auto outputString = [](string heading, string value) {
+        cout << left << setw(10) << heading << value << endl;
+    };
+
+    outputString("Title:", title);
+    outputString("File:", input.filename);
+    outputDouble("Average:", results.average);
+    outputDouble("StDev:", results.standard_deviation);
+    outputDouble("Kpx/ms:", (input.height * input.width) /
                          (1000 * results.average));
 
     for (int i = 0; i < results.stage_times.size(); i++)
-        outputRow("Stage " + to_string(i), results.stage_times[i]);
+        outputDouble("Stage " + to_string(i), results.stage_times[i]);
 }
 
 ///////// Private Methods //////////////////////////////////////////////////////
