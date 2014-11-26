@@ -58,7 +58,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
                     
         // A gradient angle of 90 degrees = an edge that is E/W
         // Check neighbors to the North and South
-        case 90: ;
+        case 90:
             // supress me if my neighbor has larger magnitude
             if (data[POS] <= data[N] || data[POS] <= data[S])
             {
