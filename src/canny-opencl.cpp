@@ -1,9 +1,11 @@
 #include <iostream>
+#include <memory>
 #include <cstring>
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
 #include "imageprocessor.h"
 #include "openclimageprocessor.h"
+#include "serialimageprocessor.h"
 
 using namespace std;
 
@@ -17,10 +19,25 @@ int main(int argc, char *argv[])
     cv::VideoCapture webcam(0);
     cv::Mat inFrame, grayFrame;
     bool useGPU = true;
-    if (argc > 1 && strcmp(argv[1], "cpu") == 0)
-        useGPU = false;
+    bool useParallel = true;
+    unique_ptr<ImageProcessor> processor(nullptr);
 
-    unique_ptr<ImageProcessor> processor(new OpenclImageProcessor(useGPU));
+    // parse command line arguments
+    for (int i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "cpu") == 0)
+            useGPU = false;
+        else if (strcmp(argv[i], "serial") == 0)
+            useParallel = false;
+    }
+
+    // Create and load the appropriate image processor
+    if (useParallel)
+        processor.reset(new OpenclImageProcessor(useGPU));
+    else
+        processor.reset(new SerialImageProcessor());
+
+
     while (true)
     {
         webcam.read(inFrame);

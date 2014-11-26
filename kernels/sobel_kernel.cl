@@ -32,9 +32,9 @@ __kernel void sobel_kernel(__global uchar *data,
         for (int j = 0; j < 3; j++)
         {
             sumx += sobx[i][j] *
-                    data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+                    data[ (i+row+-1)*cols + (j+col+-1) ];
             sumy += soby[i][j] *
-                    data[ ((i+row+rows-1)%rows)*cols + (j+col+cols-1)%cols ];
+                    data[ (i+row+-1)*cols + (j+col+-1) ];
         }
     }
 
