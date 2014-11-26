@@ -25,5 +25,5 @@ void SerialImageProcessor::NonMaxSuppression()
 
 void SerialImageProcessor::HysteresisThresholding()
 {
-
+    
 }
