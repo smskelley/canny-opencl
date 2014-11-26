@@ -40,14 +40,19 @@ class Benchmark
     InputImage input;
     ResultSet results;
     std::string path;
+    std::string title;
     int iterations;
 
     void runFullAlogirithm();
     void runComponents();
 
 public:
-    Benchmark(std::shared_ptr<ImageProcessor> _processor, std::string _path,
-              InputImage _input, int _iterations) :
+    Benchmark(std::string _title, 
+              std::shared_ptr<ImageProcessor> _processor,
+              std::string _path,
+              InputImage _input,
+              int _iterations) :
+        title(_title),
         path(_path),
         input(_input),
         processor(_processor),
