@@ -271,12 +271,43 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data,
 void SerialImageProcessor::HysteresisThresholding()
 {
     HysteresisThresholding(prevBuff(), nextBuff());
-    // commented out until HysteresisThresholding is implemented
-    //advanceBuff();
+    
+    advanceBuff();
 }
 
 void SerialImageProcessor::HysteresisThresholding(cv::Mat data, cv::Mat out)
 {
-
+    float tHigh = 70;
+    float tLow = 30;
+    float median = (tLow + tHigh)/2;
+    const float EDGE = 255;
+    const float NOEDGE = 0;
+    
+    size_t rows = data.rows;
+    size_t cols = data.cols;
+    
+    // iterate over the rows of the photo matrix
+    for (int row = 1; row < rows - 1; row++)
+    {
+        // iterate over the columns of the photo matrix
+        for (int col = 1; col < cols - 1; col++)
+        {
+            if (data.at<uchar>(row,col) >= tHigh)
+            {
+                out.at<uchar>(row,col) = EDGE;
+            }
+            else if (data.at<uchar>(row,col) <= tLow)
+            {
+                out.at<uchar>(row,col) = NOEDGE;
+            }
+            else if (data.at<uchar>(row,col) > median)
+            {
+                out.at<uchar>(row,col) = EDGE;
+            }
+            else
+            {
+                out.at<uchar>(row,col) = NOEDGE;
+            }
+        }
+    }
 }
-
