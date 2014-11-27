@@ -1,7 +1,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <algorithm>
 #include <iostream>
-#include <list>
 #include "serialimageprocessor.h"
 
 using namespace std;
