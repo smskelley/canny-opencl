@@ -16,17 +16,19 @@ __kernel void hyst_kernel(__global uchar *data,
 	size_t col = get_global_id(1);
 	size_t pos = row * cols + col;
 
-    const size_t EDGE = 255;
+    const uchar EDGE = 255;
+
+    uchar magnitude = data[pos];
     
-    if (data[pos] >= highThresh)
+    if (magnitude >= highThresh)
         out[pos] = EDGE;
-    else if (data[pos] <= lowThresh)
+    else if (magnitude <= lowThresh)
         out[pos] = 0;
     else
     {
         float med = (highThresh + lowThresh)/2;
         
-        if (data[pos] >= med)
+        if (magnitude >= med)
             out[pos] = EDGE;
         else
             out[pos] = 0;

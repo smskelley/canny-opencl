@@ -365,3 +365,26 @@ Stage 1   301.996
 Stage 2   352.861
 Stage 3   3105.67
 
+--------------------------------------------------------------------------------
+30 Nov 2014 - Stage 3 (Hysteresis Thresholding) now accessing global less
+--------------------------------------------------------------------------------
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Average:  149.683
+StDev:    4.79754
+Kpx/ms:   40.5125
+Stage 0   33.308
+Stage 1   45.235
+Stage 2   48.805
+Stage 3   19.908
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  1001.09
+StDev:    0.39502
+Kpx/ms:   38.3983
+Stage 0   211.711
+Stage 1   302.465
+Stage 2   353.073
+Stage 3   135.113
+

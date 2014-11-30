@@ -237,10 +237,10 @@ void OpenclImageProcessor::HysteresisThresholding()
     hysteresisThresholding.setArg(3, input.cols);
     
     queue.enqueueNDRangeKernel(hysteresisThresholding,
-                               cl::NullRange,
-                               cl::NDRange(input.rows,
-                                           input.cols),
                                cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
+                               cl::NDRange(16, 16),
                                NULL);
     
     advanceBuff();
