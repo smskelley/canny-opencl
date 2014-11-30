@@ -316,3 +316,27 @@ Stage 0   214.464
 Stage 1   9659.65
 Stage 2   7063.15
 Stage 3   3089.91
+
+--------------------------------------------------------------------------------
+30 Nov 2014 - Stage 1 (Sobel) now acting upon __local data
+--------------------------------------------------------------------------------
+$ ./benchmark-suite 
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Average:  1605.57
+StDev:    5.09565
+Kpx/ms:   3.77687
+Stage 0   33.859
+Stage 1   45.424
+Stage 2   1015.26
+Stage 3   508.887
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  10358.3
+StDev:    71.7775
+Kpx/ms:   3.71103
+Stage 0   212.194
+Stage 1   302.358
+Stage 2   6654.12
+Stage 3   3493.61

@@ -203,7 +203,7 @@ void OpenclImageProcessor::Sobel()
                                cl::NDRange(1, 1),
                                cl::NDRange(input.rows - 2,
                                            input.cols - 2),
-                               cl::NDRange(1, 1),
+                               cl::NDRange(16, 16),
                                NULL);
 
     advanceBuff();
