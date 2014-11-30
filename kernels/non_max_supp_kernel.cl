@@ -10,34 +10,68 @@ __kernel void non_max_supp_kernel(__global uchar *data,
 {
     // These variables are offset by one to avoid seg. fault errors
     // As such, this kernel ignores the outside ring of pixels
-    size_t row = get_global_id(0) + 1;
-    size_t col = get_global_id(1) + 1;
+    size_t g_row = get_global_id(0);
+    size_t g_col = get_global_id(1);
+    size_t l_row = get_local_id(0) + 1;
+    size_t l_col = get_local_id(1) + 1;
+    
+    size_t pos = g_row * cols + g_col;
+    
+    __local int l_data[18][18];
+
+    // copy to l_data
+    l_data[l_row][l_col] = data[pos];
+
+    // top most row
+    if (l_row == 1)
+    {
+        l_data[0][l_col] = data[pos-cols];
+        // top left
+        if (l_col == 1)
+            l_data[0][0] = data[pos-cols-1];
+
+        // top right
+        else if (l_col == 16)
+            l_data[0][17] = data[pos-cols+1];
+    }
+    // bottom most row
+    else if (l_row == 16)
+    {
+        l_data[17][l_col] = data[pos+cols];
+        // bottom left
+        if (l_col == 1)
+            l_data[17][0] = data[pos+cols-1];
+
+        // bottom right
+        else if (l_col == 16)
+            l_data[17][17] = data[pos+cols+1];
+    }
+
+    if (l_col == 1)
+        l_data[l_row][0] = data[pos-1];
+    else if (l_col == 16)
+        l_data[l_row][17] = data[pos+1];
+
+    barrier(CLK_LOCAL_MEM_FENCE);
+
+    uchar my_magnitude = l_data[l_row][l_col];
 
     // The following variables are used to address the matrices more easily
-    const size_t POS = row * cols + col;
-    const size_t N = (row - 1) * cols + col;
-    const size_t NE = (row - 1) * cols + (col + 1);
-    const size_t E = row * cols + (col + 1);
-    const size_t SE = (row + 1) * cols + (col + 1);
-    const size_t S = (row + 1) * cols + col;
-    const size_t SW = (row + 1) * cols + (col - 1);
-    const size_t W = row * cols + (col - 1);
-    const size_t NW = (row - 1) * cols + (col - 1);
-
-    switch (theta[POS])
+    switch (theta[pos])
     {
         // A gradient angle of 0 degrees = an edge that is North/South
         // Check neighbors to the East and West
         case 0:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[E] || data[POS] <= data[W])
+            if (my_magnitude <= l_data[l_row][l_col+1] || // east
+                my_magnitude <= l_data[l_row][l_col-1])   // west
             {
-                out[POS] = 0;
+                out[pos] = 0;
             }
             // otherwise, copy my value to the output buffer
             else
             {
-                out[POS] = data[POS];
+                out[pos] = my_magnitude;
             }
             break;
                 
@@ -45,14 +79,15 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the NE and SW
         case 45:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[NE] || data[POS] <= data[SW])
+            if (my_magnitude <= l_data[l_row-1][l_col+1] || // north east
+                my_magnitude <= l_data[l_row+1][l_col-1])   // south west
             {
-                out[POS] = 0;
+                out[pos] = 0;
             }
             // otherwise, copy my value to the output buffer
             else
             {
-                out[POS] = data[POS];
+                out[pos] = my_magnitude;
             }
             break;
                     
@@ -60,14 +95,15 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the North and South
         case 90:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[N] || data[POS] <= data[S])
+            if (my_magnitude <= l_data[l_row-1][l_col] || // north
+                my_magnitude <= l_data[l_row+1][l_col])   // south
             {
-                out[POS] = 0;
+                out[pos] = 0;
             }
             // otherwise, copy my value to the output buffer
             else
             {
-                out[POS] = data[POS];
+                out[pos] = my_magnitude;
             }
             break;
                     
@@ -75,19 +111,20 @@ __kernel void non_max_supp_kernel(__global uchar *data,
         // Check neighbors to the NW and SE
         case 135:
             // supress me if my neighbor has larger magnitude
-            if (data[POS] <= data[NW] || data[POS] <= data[SE])
+            if (my_magnitude <= l_data[l_row-1][l_col-1] || // north west
+                my_magnitude <= l_data[l_row+1][l_col+1])   // south east
             {
-                out[POS] = 0;
+                out[pos] = 0;
             }
             // otherwise, copy my value to the output buffer
             else
             {
-                out[POS] = data[POS];
+                out[pos] = my_magnitude;
             }
             break;
                     
         defaut:
-            out[POS] = data[POS];
+            out[pos] = my_magnitude;
             break;
     } 
 }
