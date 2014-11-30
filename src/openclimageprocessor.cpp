@@ -219,10 +219,11 @@ void OpenclImageProcessor::NonMaxSuppression()
     nonMaxSuppression.setArg(4, input.cols);
 
     queue.enqueueNDRangeKernel(nonMaxSuppression,
-            cl::NullRange,
-            cl::NDRange(input.rows - 2, input.cols - 2),
-            cl::NDRange(1, 1),
-            NULL);
+                               cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
+                               cl::NDRange(16, 16),
+                               NULL);
 
     advanceBuff();
 }

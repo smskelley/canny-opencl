@@ -25,15 +25,15 @@ int main(int argc, char *argv[])
     // compile a list of all benchmarks to run.
     for (auto image : input_images)
     {
-        benchmarks.push_back(
-                Benchmark("Serial",
-                shared_ptr<ImageProcessor>(new SerialImageProcessor()),
-                IMG_PATH, image, 3));
-
-        benchmarks.push_back(
-                Benchmark("OpenCV",
-                shared_ptr<ImageProcessor>(new CvImageProcessor()),
-                IMG_PATH, image, 3));
+//        benchmarks.push_back(
+//                Benchmark("Serial",
+//                shared_ptr<ImageProcessor>(new SerialImageProcessor()),
+//                IMG_PATH, image, 3));
+//
+//        benchmarks.push_back(
+//                Benchmark("OpenCV",
+//                shared_ptr<ImageProcessor>(new CvImageProcessor()),
+//                IMG_PATH, image, 3));
 
         // OpenCL GPU & CPU benchmarks
         benchmarks.push_back(

@@ -340,3 +340,28 @@ Stage 0   212.194
 Stage 1   302.358
 Stage 2   6654.12
 Stage 3   3493.61
+
+--------------------------------------------------------------------------------
+30 Nov 2014 - Stage 2 (Nonmaximum Suppression) now acting upon __local data
+--------------------------------------------------------------------------------
+$ ./benchmark-suite 
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Average:  639.471
+StDev:    4.52277
+Kpx/ms:   9.4829
+Stage 0   33.184
+Stage 1   45.622
+Stage 2   49.098
+Stage 3   509.936
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  3968.53
+StDev:    3.82054
+Kpx/ms:   9.6862
+Stage 0   211.309
+Stage 1   301.996
+Stage 2   352.861
+Stage 3   3105.67
+
