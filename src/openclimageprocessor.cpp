@@ -105,9 +105,31 @@ void OpenclImageProcessor::DeviceInfo()
 }
 
 // load the 8bit 1channel grayscale Mat
-void OpenclImageProcessor::LoadImage(cv::Mat &input)
+void OpenclImageProcessor::LoadImage(cv::Mat &image_input)
 {
-    this->input = input;
+    // We want the rows and columns to be an integer multiple of 16 *after*
+    // 2 is subtracted from them, since all of our kernels do not run edge
+    // pixels. The following math yields the following results (using small
+    // integers for obviousness):
+    // input size   desired size
+    // 31           18
+    // 32           18
+    // 33           18
+    // 34           34
+    // 35           34
+    int rows = (image_input.rows - 2) / 16 * 16 + 2;
+    int cols = (image_input.cols - 2) / 16 * 16 + 2;
+
+    // Use these new row/cols to create a rectangle which will serve as our crop
+    cv::Rect croppedArea(0,0,cols,rows);
+
+    // Crop the image and clone it. If it's not cloned, then the layout of the
+    // data won't change, so our kernels wouldn't be writing to the correct
+    // location. This could be a place of likely inefficiency. It might be
+    // better to move towards not actually cropping the image, instead doing
+    // more work in the kernel.
+    this->input = image_input(croppedArea).clone();
+
     output = cv::Mat(input.rows, input.cols, CV_8UC1);
     nextBuff() = cl::Buffer(context,
                             CL_MEM_READ_WRITE |
@@ -146,18 +168,25 @@ void OpenclImageProcessor::FinishJobs()
 // enqueues the gaussian kernel
 void OpenclImageProcessor::Gaussian()
 {
-    gaussian.setArg(0, prevBuff());
-    gaussian.setArg(1, nextBuff());
-    gaussian.setArg(2, input.rows);
-    gaussian.setArg(3, input.cols);
+    try
+    {
+        gaussian.setArg(0, prevBuff());
+        gaussian.setArg(1, nextBuff());
+        gaussian.setArg(2, input.rows);
+        gaussian.setArg(3, input.cols);
 
-    queue.enqueueNDRangeKernel(gaussian,
-                               cl::NDRange(1, 1),
-                               cl::NDRange(input.rows - 2,
-                                           input.cols - 2),
-                               cl::NDRange(1, 1),
-                               NULL);
+        queue.enqueueNDRangeKernel(gaussian,
+                cl::NDRange(1, 1),
+                cl::NDRange(input.rows - 2,
+                            input.cols - 2),
+                cl::NDRange(16, 16),
+                NULL);
 
+    }
+    catch (cl::Error e)
+    {
+        cerr << endl << "Error: " << e.what() << " : " << e.err() << endl;
+    }
     advanceBuff();
 }
 
