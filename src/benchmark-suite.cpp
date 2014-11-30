@@ -25,26 +25,29 @@ int main(int argc, char *argv[])
     // compile a list of all benchmarks to run.
     for (auto image : input_images)
     {
+        benchmarks.push_back(
+                Benchmark("Serial",
+                shared_ptr<ImageProcessor>(new SerialImageProcessor()),
+                IMG_PATH, image, 3));
+
+        benchmarks.push_back(
+                Benchmark("OpenCV",
+                shared_ptr<ImageProcessor>(new CvImageProcessor()),
+                IMG_PATH, image, 3));
+
         // OpenCL GPU & CPU benchmarks
         benchmarks.push_back(
-            Benchmark("OpenCL GPU",
-            shared_ptr<ImageProcessor>(new OpenclImageProcessor(true)),
-            IMG_PATH, image, 3));
+                Benchmark("OpenCL GPU",
+                shared_ptr<ImageProcessor>(new OpenclImageProcessor(true)),
+                IMG_PATH, image, 3));
 
-        benchmarks.push_back(
-            Benchmark("OpenCL CPU",
-            shared_ptr<ImageProcessor>(new OpenclImageProcessor(false)),
-            IMG_PATH, image, 3));
-
-        benchmarks.push_back(
-            Benchmark("Serial",
-            shared_ptr<ImageProcessor>(new SerialImageProcessor()),
-            IMG_PATH, image, 3));
-
-        benchmarks.push_back(
-            Benchmark("OpenCV",
-            shared_ptr<ImageProcessor>(new CvImageProcessor()),
-            IMG_PATH, image, 3));
+// OpenCL CPU disabled in gpu optimized version since CPU only supports
+// linear workgroup sizing.
+//
+//        benchmarks.push_back(
+//            Benchmark("OpenCL CPU",
+//            shared_ptr<ImageProcessor>(new OpenclImageProcessor(false)),
+//            IMG_PATH, image, 3));
 
     }
     
