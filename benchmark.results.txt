@@ -388,3 +388,204 @@ Stage 1   302.465
 Stage 2   353.073
 Stage 3   135.113
 
+
+--------------------------------------------------------------------------------
+30 Nov 2014 - All stages with all applicable benchmarks for GPU
+--------------------------------------------------------------------------------
+Title:    Serial
+File:     Great_Tit.jpg
+Average:  1870.11
+StDev:    55.769
+Kpx/ms:   3.2426
+Stage 0   585.196
+Stage 1   1038.87
+Stage 2   93.987
+Stage 3   96.008
+
+Title:    OpenCV
+File:     Great_Tit.jpg
+Average:  73.2967
+StDev:    10.4621
+Kpx/ms:   82.7328
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Average:  149.428
+StDev:    4.68434
+Kpx/ms:   40.5817
+Stage 0   33.153
+Stage 1   45.19
+Stage 2   49.09
+Stage 3   20.211
+
+Title:    Serial
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  12203.8
+StDev:    940.029
+Kpx/ms:   3.14985
+Stage 0   3710.67
+Stage 1   6541.98
+Stage 2   597.534
+Stage 3   651.125
+
+Title:    OpenCV
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  1014.66
+StDev:    15.484
+Kpx/ms:   37.8847
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Average:  1004.33
+StDev:    4.20645
+Kpx/ms:   38.2743
+Stage 0   211.644
+Stage 1   303.082
+Stage 2   353.861
+Stage 3   135.166
+
+--------------------------------------------------------------------------------
+02 Dec 2014 - Added very small (Lena) and very large (world) images. Benchmark
+              also now displays image megapixels.
+--------------------------------------------------------------------------------
+$ ./benchmark-suite 
+Title:    Serial
+File:     world.jpg
+Megapixels:288
+Average:  85557.4
+StDev:    837.022
+Kpx/ms:   3.36616
+Stage 0   26960.4
+Stage 1   49804.2
+Stage 2   4342.51
+Stage 3   4916.14
+
+Title:    OpenCV
+File:     world.jpg
+Megapixels:288
+Average:  4087.71
+StDev:    63.2014
+Kpx/ms:   70.455
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     world.jpg
+Megapixels:288
+Average:  8433.52
+StDev:    58.6298
+Kpx/ms:   34.1495
+Stage 0   1562.23
+Stage 1   3085.27
+Stage 2   3685.41
+Stage 3   868.57
+
+Title:    Serial
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  1870.08
+StDev:    53.3342
+Kpx/ms:   3.24266
+Stage 0   581.214
+Stage 1   1043.33
+Stage 2   95.42
+Stage 3   106.929
+
+Title:    OpenCV
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  64.8863
+StDev:    11.2115
+Kpx/ms:   93.4563
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  150.37
+StDev:    4.87996
+Kpx/ms:   40.3274
+Stage 0   33.308
+Stage 1   44.927
+Stage 2   49.024
+Stage 3   20.297
+
+Title:    Serial
+File:     lena.jpg
+Megapixels:0.01
+Average:  20.034
+StDev:    1.03511
+Kpx/ms:   0.499151
+Stage 0   5.853
+Stage 1   15.285
+Stage 2   1.28
+Stage 3   1.052
+
+Title:    OpenCV
+File:     lena.jpg
+Megapixels:0.01
+Average:  1.046
+StDev:    0.0697758
+Kpx/ms:   9.56023
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     lena.jpg
+Megapixels:0.01
+Average:  2.26933
+StDev:    0.332816
+Kpx/ms:   4.40658
+Stage 0   0.795
+Stage 1   0.901
+Stage 2   0.817
+Stage 3   0.518
+
+Title:    Serial
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  12003.7
+StDev:    835.019
+Kpx/ms:   3.20234
+Stage 0   3702.2
+Stage 1   6382.29
+Stage 2   563.442
+Stage 3   632.37
+
+Title:    OpenCV
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  1011.73
+StDev:    8.34585
+Kpx/ms:   37.9942
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  1000.41
+StDev:    2.32993
+Kpx/ms:   38.4244
+Stage 0   211.929
+Stage 1   301.534
+Stage 2   352.584
+Stage 3   132.996
+

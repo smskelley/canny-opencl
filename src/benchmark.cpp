@@ -33,6 +33,7 @@ void Benchmark::OutputResults()
 
     outputString("Title:", title);
     outputString("File:", input.filename);
+    outputDouble("Megapixels:", input.MegaPixels());
     outputDouble("Average:", results.average);
     outputDouble("StDev:", results.standard_deviation);
     outputDouble("Kpx/ms:", (input.height * input.width) /
