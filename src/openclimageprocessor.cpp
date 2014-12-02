@@ -107,7 +107,7 @@ void OpenclImageProcessor::DeviceInfo()
 // load the 8bit 1channel grayscale Mat
 void OpenclImageProcessor::LoadImage(cv::Mat &image_input)
 {
-    // We want the rows and columns to be an integer multiple of 16 *after*
+    // We want the rows and columns to be an integer multiple of groupSize *after*
     // 2 is subtracted from them, since all of our kernels do not run edge
     // pixels. The following math yields the following results (using small
     // integers for obviousness):
@@ -117,8 +117,8 @@ void OpenclImageProcessor::LoadImage(cv::Mat &image_input)
     // 33           18
     // 34           34
     // 35           34
-    int rows = (image_input.rows - 2) / 16 * 16 + 2;
-    int cols = (image_input.cols - 2) / 16 * 16 + 2;
+    int rows = ((image_input.rows - 2) / groupSize) * groupSize + 2;
+    int cols = ((image_input.cols - 2) / groupSize) * groupSize + 2;
 
     // Use these new row/cols to create a rectangle which will serve as our crop
     cv::Rect croppedArea(0,0,cols,rows);
@@ -179,7 +179,7 @@ void OpenclImageProcessor::Gaussian()
                 cl::NDRange(1, 1),
                 cl::NDRange(input.rows - 2,
                             input.cols - 2),
-                cl::NDRange(16, 16),
+                cl::NDRange(groupSize, groupSize),
                 NULL);
 
     }
@@ -203,7 +203,7 @@ void OpenclImageProcessor::Sobel()
                                cl::NDRange(1, 1),
                                cl::NDRange(input.rows - 2,
                                            input.cols - 2),
-                               cl::NDRange(16, 16),
+                               cl::NDRange(groupSize, groupSize),
                                NULL);
 
     advanceBuff();
@@ -222,7 +222,7 @@ void OpenclImageProcessor::NonMaxSuppression()
                                cl::NDRange(1, 1),
                                cl::NDRange(input.rows - 2,
                                            input.cols - 2),
-                               cl::NDRange(16, 16),
+                               cl::NDRange(groupSize, groupSize),
                                NULL);
 
     advanceBuff();
@@ -240,7 +240,7 @@ void OpenclImageProcessor::HysteresisThresholding()
                                cl::NDRange(1, 1),
                                cl::NDRange(input.rows - 2,
                                            input.cols - 2),
-                               cl::NDRange(16, 16),
+                               cl::NDRange(groupSize, groupSize),
                                NULL);
     
     advanceBuff();

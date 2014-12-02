@@ -34,6 +34,8 @@ class OpenclImageProcessor : public ImageProcessor
     // not be accessed directly, instead look at using nextBuff/prevBuff.
     size_t bufferIndex = 0;
 
+    const int groupSize = 16;
+
     // Private Methods
     // nextBuff returns a reference to the next buffer that should be modified.
     cl::Buffer& nextBuff() { return buffers[bufferIndex]; }
