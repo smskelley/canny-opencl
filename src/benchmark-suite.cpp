@@ -28,26 +28,24 @@ int main(int argc, char *argv[])
     for (auto image : input_images)
     {
         // OpenCL GPU & CPU benchmarks
-//        benchmarks.push_back(
-//            Benchmark("OpenCL GPU",
-//            shared_ptr<ImageProcessor>(new OpenclImageProcessor(true)),
-//            IMG_PATH, image, 3));
-
+        benchmarks.push_back(
+            Benchmark("OpenCL GPU",
+            shared_ptr<ImageProcessor>(new OpenclImageProcessor(true)),
+            IMG_PATH, image, 3));
         benchmarks.push_back(
             Benchmark("OpenCL CPU",
             shared_ptr<ImageProcessor>(new OpenclImageProcessor(false)),
             IMG_PATH, image, 3));
 
-//        benchmarks.push_back(
-//            Benchmark("Serial",
-//            shared_ptr<ImageProcessor>(new SerialImageProcessor()),
-//            IMG_PATH, image, 3));
-//
-//        benchmarks.push_back(
-//            Benchmark("OpenCV",
-//            shared_ptr<ImageProcessor>(new CvImageProcessor()),
-//            IMG_PATH, image, 3));
-
+        // Benchmarks to compare our results against.
+        benchmarks.push_back(
+            Benchmark("Serial",
+            shared_ptr<ImageProcessor>(new SerialImageProcessor()),
+            IMG_PATH, image, 3));
+        benchmarks.push_back(
+            Benchmark("OpenCV",
+            shared_ptr<ImageProcessor>(new CvImageProcessor()),
+            IMG_PATH, image, 3));
     }
     
     // Run all benchmarks

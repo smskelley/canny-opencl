@@ -9,13 +9,33 @@
 using namespace std;
 
 /***  Private Methods  ********************************************************/
-cl::Kernel OpenclImageProcessor::loadKernel(string filename, string kernel_name)
+// Return the relative path to the cpu or gpu  kernel given a filename
+// e.g. kernelPath("mykernel.cl", true); // returns: kernels/gpu/mykerne.cl
+string OpenclImageProcessor::kernelPath(std::string filename, bool use_gpu)
 {
-    ifstream cl_file("kernels/" + filename);
+    // this is not platform independent and should be rewritten if that becomes
+    // a requirement.
+    string path = "kernels/";
+
+    if (use_gpu)
+        path += "gpu/";
+    else
+        path += "cpu/";
+
+    path += filename;
+    return path;
+}
+cl::Kernel OpenclImageProcessor::loadKernel(string filename, string kernel_name,
+                                            bool use_gpu)
+{
+    ifstream cl_file(kernelPath(filename, use_gpu));
     if (!cl_file.good())
-        cerr << "Couldn't open " << filename<< endl;
+        cerr << "Couldn't open " << kernelPath(filename, use_gpu) << endl;
+    cout << "Opened " << kernelPath(filename, use_gpu) << endl; 
+
+    // Read the kernel file and create a cl::Program with it.
     string cl_string(istreambuf_iterator<char>(cl_file),
-            (istreambuf_iterator<char>()));
+                     (istreambuf_iterator<char>()));
     cl::Program::Sources source(1, make_pair(cl_string.c_str(),
                 cl_string.length() + 1));
     cl::Program program(context, source);
@@ -62,14 +82,21 @@ cl::Device &OpenclImageProcessor::findBestDevice()
 
 /***  Public Methods **********************************************************/
 
-OpenclImageProcessor::OpenclImageProcessor(bool UseGPU)
+OpenclImageProcessor::OpenclImageProcessor(bool use_gpu)
 {
+    // Determine the NDRange size for each group. This should be made more
+    // general in the future, but it works on most hardware for now.
+    if (use_gpu)
+        groupSize = 16;
+    else
+        groupSize = 1;
+
+    // Initialize OpenCL
     try
     {
-        // OpenCL Initialization
         cl::Platform::get(&platforms);
 
-        if (UseGPU)
+        if (use_gpu)
             platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
         else
             platforms[0].getDevices(CL_DEVICE_TYPE_CPU, &devices);
@@ -79,15 +106,17 @@ OpenclImageProcessor::OpenclImageProcessor(bool UseGPU)
         queue = cl::CommandQueue(context, selectedDevice);
         
         // create and load the kernels
-        gaussian = loadKernel("gaussian_kernel.cl", "gaussian_kernel");
+        gaussian = loadKernel("gaussian_kernel.cl", "gaussian_kernel", use_gpu);
 
         // currently using the edge kernel as the sobel kernel
-        sobel = loadKernel("sobel_kernel.cl", "sobel_kernel");
+        sobel = loadKernel("sobel_kernel.cl", "sobel_kernel", use_gpu);
 
         nonMaxSuppression = loadKernel("non_max_supp_kernel.cl",
-                                       "non_max_supp_kernel");
+                                       "non_max_supp_kernel",
+                                       use_gpu);
         
-        hysteresisThresholding = loadKernel("hyst_kernel.cl", "hyst_kernel");
+        hysteresisThresholding = loadKernel("hyst_kernel.cl", "hyst_kernel",
+                                            use_gpu);
     }
     catch (cl::Error e)
     {
@@ -105,9 +134,31 @@ void OpenclImageProcessor::DeviceInfo()
 }
 
 // load the 8bit 1channel grayscale Mat
-void OpenclImageProcessor::LoadImage(cv::Mat &input)
+void OpenclImageProcessor::LoadImage(cv::Mat &image_input)
 {
-    this->input = input;
+    // We want the rows and columns to be an integer multiple of groupSize *after*
+    // 2 is subtracted from them, since all of our kernels do not run edge
+    // pixels. The following math yields the following results with groupSize=16
+    // (using small integers for obviousness):
+    // input size   desired size
+    // 31           18
+    // 32           18
+    // 33           18
+    // 34           34
+    // 35           34
+    int rows = ((image_input.rows - 2) / groupSize) * groupSize + 2;
+    int cols = ((image_input.cols - 2) / groupSize) * groupSize + 2;
+
+    // Use these new row/cols to create a rectangle which will serve as our crop
+    cv::Rect croppedArea(0,0,cols,rows);
+
+    // Crop the image and clone it. If it's not cloned, then the layout of the
+    // data won't change, so our kernels wouldn't be writing to the correct
+    // location. This could be a place of likely inefficiency. It might be
+    // better to move towards not actually cropping the image, instead doing
+    // more work in the kernel.
+    this->input = image_input(croppedArea).clone();
+
     output = cv::Mat(input.rows, input.cols, CV_8UC1);
     nextBuff() = cl::Buffer(context,
                             CL_MEM_READ_WRITE |
@@ -146,18 +197,25 @@ void OpenclImageProcessor::FinishJobs()
 // enqueues the gaussian kernel
 void OpenclImageProcessor::Gaussian()
 {
-    gaussian.setArg(0, prevBuff());
-    gaussian.setArg(1, nextBuff());
-    gaussian.setArg(2, input.rows);
-    gaussian.setArg(3, input.cols);
+    try
+    {
+        gaussian.setArg(0, prevBuff());
+        gaussian.setArg(1, nextBuff());
+        gaussian.setArg(2, input.rows);
+        gaussian.setArg(3, input.cols);
 
-    queue.enqueueNDRangeKernel(gaussian,
-                               cl::NDRange(1, 1),
-                               cl::NDRange(input.rows - 2,
-                                           input.cols - 2),
-                               cl::NDRange(1, 1),
-                               NULL);
+        queue.enqueueNDRangeKernel(gaussian,
+                cl::NDRange(1, 1),
+                cl::NDRange(input.rows - 2,
+                            input.cols - 2),
+                cl::NDRange(groupSize, groupSize),
+                NULL);
 
+    }
+    catch (cl::Error e)
+    {
+        cerr << endl << "Error: " << e.what() << " : " << e.err() << endl;
+    }
     advanceBuff();
 }
 
@@ -174,7 +232,7 @@ void OpenclImageProcessor::Sobel()
                                cl::NDRange(1, 1),
                                cl::NDRange(input.rows - 2,
                                            input.cols - 2),
-                               cl::NDRange(1, 1),
+                               cl::NDRange(groupSize, groupSize),
                                NULL);
 
     advanceBuff();
@@ -190,10 +248,11 @@ void OpenclImageProcessor::NonMaxSuppression()
     nonMaxSuppression.setArg(4, input.cols);
 
     queue.enqueueNDRangeKernel(nonMaxSuppression,
-            cl::NullRange,
-            cl::NDRange(input.rows - 2, input.cols - 2),
-            cl::NDRange(1, 1),
-            NULL);
+                               cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
+                               cl::NDRange(groupSize, groupSize),
+                               NULL);
 
     advanceBuff();
 }
@@ -207,10 +266,10 @@ void OpenclImageProcessor::HysteresisThresholding()
     hysteresisThresholding.setArg(3, input.cols);
     
     queue.enqueueNDRangeKernel(hysteresisThresholding,
-                               cl::NullRange,
-                               cl::NDRange(input.rows,
-                                           input.cols),
                                cl::NDRange(1, 1),
+                               cl::NDRange(input.rows - 2,
+                                           input.cols - 2),
+                               cl::NDRange(groupSize, groupSize),
                                NULL);
     
     advanceBuff();

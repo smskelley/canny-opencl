@@ -10,8 +10,8 @@ __kernel void non_max_supp_kernel(__global uchar *data,
 {
     // These variables are offset by one to avoid seg. fault errors
     // As such, this kernel ignores the outside ring of pixels
-    size_t row = get_global_id(0) + 1;
-    size_t col = get_global_id(1) + 1;
+    size_t row = get_global_id(0);
+    size_t col = get_global_id(1);
 
     // The following variables are used to address the matrices more easily
     const size_t POS = row * cols + col;
@@ -86,7 +86,7 @@ __kernel void non_max_supp_kernel(__global uchar *data,
             }
             break;
                     
-        defaut:
+        default:
             out[POS] = data[POS];
             break;
     } 

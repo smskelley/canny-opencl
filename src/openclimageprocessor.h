@@ -34,6 +34,9 @@ class OpenclImageProcessor : public ImageProcessor
     // not be accessed directly, instead look at using nextBuff/prevBuff.
     size_t bufferIndex = 0;
 
+    // Determines the NDRange group size.
+    int groupSize = 1;
+
     // Private Methods
     // nextBuff returns a reference to the next buffer that should be modified.
     cl::Buffer& nextBuff() { return buffers[bufferIndex]; }
@@ -48,8 +51,13 @@ class OpenclImageProcessor : public ImageProcessor
     // this will throw std::out_of_range.
     cl::Device & findBestDevice();
 
+    // Return the relative path to the cpu or gpu  kernel given a filename
+    // e.g. kernelPath("mykernel.cl", true); // returns: kernels/gpu/mykerne.cl
+    std::string kernelPath(std::string filename, bool use_gpu);
+
     // Given a filename (without its path) load and return the kernel.
-    cl::Kernel loadKernel(std::string filename, std::string kernel_name);
+    cl::Kernel loadKernel(std::string filename, std::string kernel_name,
+                          bool use_gpu);
 
   public:
     OpenclImageProcessor(bool UseGPU = true);
