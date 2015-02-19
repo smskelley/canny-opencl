@@ -5,7 +5,7 @@ CV_PATH=/usr/local/
 SRCDIR=src
 VPATH=$(SRCDIR)
 LDFLAGS=-L$(CV_PATH)lib/ 
-CPPFLAGS=-I$(CV_PATH)include/ -std=c++11 
+CPPFLAGS=-I$(CV_PATH)include/ -std=c++11 -Wall
 LDLIBS=-lopencv_core -lopencv_imgproc -lopencv_highgui -framework OpenCL
 
 

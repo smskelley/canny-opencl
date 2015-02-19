@@ -52,10 +52,10 @@ public:
               std::string _path,
               InputImage _input,
               int _iterations) :
-        title(_title),
-        path(_path),
-        input(_input),
         processor(_processor),
+        input(_input),
+        path(_path),
+        title(_title),
         iterations(_iterations)
     {
         image = cv::imread(path + input.filename,

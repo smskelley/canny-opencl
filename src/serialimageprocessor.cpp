@@ -260,7 +260,7 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data,
                     }
                     break;
                     
-                defaut:
+                default:
                     out.data[POS] = data.data[POS];
                     break;
             } 
