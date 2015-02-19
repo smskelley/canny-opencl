@@ -31,7 +31,6 @@ cl::Kernel OpenclImageProcessor::loadKernel(string filename, string kernel_name,
     ifstream cl_file(kernelPath(filename, use_gpu));
     if (!cl_file.good())
         cerr << "Couldn't open " << kernelPath(filename, use_gpu) << endl;
-    cout << "Opened " << kernelPath(filename, use_gpu) << endl; 
 
     // Read the kernel file and create a cl::Program with it.
     string cl_string(istreambuf_iterator<char>(cl_file),
