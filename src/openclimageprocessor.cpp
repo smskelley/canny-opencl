@@ -11,7 +11,7 @@ using namespace std;
 /***  Private Methods  ********************************************************/
 cl::Kernel OpenclImageProcessor::loadKernel(string filename, string kernel_name)
 {
-    ifstream cl_file("kernels/" + filename);
+    ifstream cl_file("kernels/gpu/" + filename);
     if (!cl_file.good())
         cerr << "Couldn't open " << filename<< endl;
     string cl_string(istreambuf_iterator<char>(cl_file),
