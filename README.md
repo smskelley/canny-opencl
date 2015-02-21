@@ -4,6 +4,12 @@
 This is an implementation of the Canny Edge Detection algorithm using OpenCL in
 C++. It uses OpenCV for some utility features, such as capturing an image from
 a webcam, opening/writing an image file, and converting from BGR to Grayscale.
+Note that it was considered outside of the scope of this project to maintain
+cross platform compatability, so it has only been tested in OSX 10.10.
+Additionally, because OpenCL applications can be heavily optimized depending on
+the target hardware, the range of target hardware has been significantly
+limited. While this should run on most modern macs, it has only really been
+optimized and tested on my early 2011 Macbook Pro 15".
 
 ##Executables
 It contains two executables: live-capture and benchmark-suite. Live capture
