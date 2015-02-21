@@ -3,16 +3,15 @@
 #include "imageprocessor.h"
 //#include <opencv2/imgproc/imgproc.hpp>
 
-class CvImageProcessor : public ImageProcessor
-{
-  public:
-    CvImageProcessor();
+class CvImageProcessor : public ImageProcessor {
+ public:
+  CvImageProcessor();
 
-    virtual void Canny();
+  virtual void Canny();
 
-    // For the OpenCV Image Processor, these are all blank
-    virtual void Gaussian() {}
-    virtual void Sobel() {}
-    virtual void NonMaxSuppression() {}
-    virtual void HysteresisThresholding() {}
+  // For the OpenCV Image Processor, these are all blank
+  virtual void Gaussian() {}
+  virtual void Sobel() {}
+  virtual void NonMaxSuppression() {}
+  virtual void HysteresisThresholding() {}
 };

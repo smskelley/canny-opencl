@@ -6,12 +6,6 @@
 
 using namespace std;
 
-CvImageProcessor::CvImageProcessor()
-{
+CvImageProcessor::CvImageProcessor() {}
 
-}
-
-void CvImageProcessor::Canny()
-{
-    cv::Canny(input, output, 40, 80);
-}
+void CvImageProcessor::Canny() { cv::Canny(input, output, 40, 80); }
