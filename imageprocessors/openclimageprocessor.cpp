@@ -1,12 +1,12 @@
 #include <cassert>
 #include <cmath>
 #include <regex>
-#include <stdexcept>
 #include "imageprocessor.h"
 #include "openclimageprocessor.h"
-#include "cl.hpp"
 
 using namespace std;
+
+namespace ImageProcessors {
 
 /***  Private Methods  ********************************************************/
 // Return the relative path to the cpu or gpu  kernel given a filename
@@ -235,4 +235,5 @@ void OpenclImageProcessor::Canny() {
   Sobel();
   NonMaxSuppression();
   HysteresisThresholding();
+}
 }

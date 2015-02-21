@@ -2,6 +2,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "imageprocessor.h"
 
+namespace ImageProcessors {
+
 class SerialImageProcessor : public ImageProcessor {
  protected:
   cv::Mat theta_;
@@ -36,3 +38,5 @@ class SerialImageProcessor : public ImageProcessor {
   virtual void NonMaxSuppression(cv::Mat data, cv::Mat out, cv::Mat theta);
   virtual void HysteresisThresholding(cv::Mat data, cv::Mat out);
 };
+
+}

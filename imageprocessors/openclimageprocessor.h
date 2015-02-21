@@ -10,6 +10,8 @@
 #include "cl.hpp"
 #include "imageprocessor.h"
 
+namespace ImageProcessors {
+
 class OpenclImageProcessor : public ImageProcessor {
   // OpenCL Objects
   std::vector<cl::Platform> platforms_;
@@ -83,3 +85,5 @@ class OpenclImageProcessor : public ImageProcessor {
   void HysteresisThresholding();
   void Canny();
 };
+
+}

@@ -1,16 +1,14 @@
 #include <iostream>
 #include <iomanip>
-#include <string>
 #include <vector>
-#include <cstring>
 #include <cmath>
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
 #include "benchmark.h"
-#include "imageprocessor.h"
 
 using namespace std;
 
+namespace Benchmarking {
 ///////// Public Methods ///////////////////////////////////////////////////////
 void Benchmark::Run() {
   RunFullAlogirithm();
@@ -115,4 +113,5 @@ void Benchmark::RunComponents() {
     processor_->FinishJobs();
     results_.stage_times.push_back(timer.Duration());
   }
+}
 }

@@ -11,7 +11,8 @@
 #include "cvimageprocessor.h"
 
 using namespace std;
-
+using namespace Benchmarking;
+using namespace ImageProcessors;
 const string IMG_PATH = "images/";
 
 vector<Benchmark> create_benchmarks(vector<InputImage> input_images);

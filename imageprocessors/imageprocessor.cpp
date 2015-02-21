@@ -1,10 +1,8 @@
 #include <cassert>
-#include <cmath>
 #include <regex>
-#include <stdexcept>
 #include "imageprocessor.h"
 
-using namespace std;
+namespace ImageProcessors {
 /***  Public Methods **********************************************************/
 // load the 8bit 1channel grayscale Mat
 void ImageProcessor::LoadImage(cv::Mat &input) {
@@ -24,4 +22,5 @@ void ImageProcessor::Canny() {
   Sobel();
   NonMaxSuppression();
   HysteresisThresholding();
+}
 }

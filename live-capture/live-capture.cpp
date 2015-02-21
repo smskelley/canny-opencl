@@ -8,6 +8,8 @@
 #include "serialimageprocessor.h"
 
 using namespace std;
+using namespace ImageProcessors;
+using Benchmarking::AutoTimer;
 
 // Called when timer finishes, output the amount of time it took.
 void onTimerFinish(double time) {

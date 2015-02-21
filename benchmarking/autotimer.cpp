@@ -10,6 +10,8 @@
 
 using namespace std;
 
+namespace Benchmarking {
+
 AutoTimer::AutoTimer() { start_ = chrono::steady_clock::now(); }
 
 AutoTimer::AutoTimer(std::function<void(double)> call_back) {
@@ -25,4 +27,5 @@ double AutoTimer::Duration() {
   end_ = chrono::steady_clock::now();
   return (chrono::duration_cast<chrono::duration<int, micro> >(end_ - start_))
              .count() / 1000.0;
+}
 }

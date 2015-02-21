@@ -6,6 +6,8 @@
 #include "autotimer.h"
 #include "imageprocessor.h"
 
+namespace Benchmarking
+{
 // Stores basic information about an input image
 struct InputImage {
   std::string filename;
@@ -30,7 +32,7 @@ struct ResultSet {
 // other types of benchmarks we need to perform (serial and opencv's gpu
 // implementation). Probably turn this into an abstract base and derive from it.
 class Benchmark {
-  std::shared_ptr<ImageProcessor> processor_;
+  std::shared_ptr<ImageProcessors::ImageProcessor> processor_;
   cv::Mat image_;
   InputImage input_;
   ResultSet results_;
@@ -42,7 +44,7 @@ class Benchmark {
   void RunComponents();
 
  public:
-  Benchmark(std::string _title, std::shared_ptr<ImageProcessor> _processor,
+  Benchmark(std::string _title, std::shared_ptr<ImageProcessors::ImageProcessor> _processor,
             std::string _path, InputImage _input, int _iterations)
       : processor_(_processor),
         input_(_input),
@@ -56,3 +58,5 @@ class Benchmark {
   void OutputResults();
   ResultSet Results() { return results_; }
 };
+}
+

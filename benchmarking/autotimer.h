@@ -10,6 +10,8 @@
 #include <functional>
 #include <chrono>
 
+namespace Benchmarking {
+
 class AutoTimer {
   std::chrono::steady_clock::time_point start_;
   std::chrono::steady_clock::time_point end_;
@@ -21,3 +23,4 @@ class AutoTimer {
   ~AutoTimer();
   double Duration();
 };
+}

@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 //#include <opencv2/imgproc/imgproc.hpp>
 
+namespace ImageProcessors {
 class ImageProcessor {
  protected:
   // OpenCV Objects
@@ -33,3 +34,4 @@ class ImageProcessor {
   virtual void HysteresisThresholding() = 0;
   virtual void Canny();
 };
+}

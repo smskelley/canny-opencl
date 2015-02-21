@@ -1,9 +1,11 @@
-#include <opencv2/highgui/highgui.hpp>
 #include <algorithm>
-#include <iostream>
+#include <opencv2/highgui/highgui.hpp>
 #include "serialimageprocessor.h"
 
-using namespace std;
+namespace ImageProcessors {
+
+using std::min;
+using std::max;
 
 const float gaus[3][3] = {
     {0.0625, 0.125, 0.0625}, {0.1250, 0.125, 0.1250}, {0.0625, 0.125, 0.0625}};
@@ -244,4 +246,6 @@ void SerialImageProcessor::HysteresisThresholding(cv::Mat data, cv::Mat out) {
       }
     }
   }
+}
+
 }
