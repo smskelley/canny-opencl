@@ -63,6 +63,9 @@ the webcam's data.
 
 ###Benchmarking
     usage: ./benchmark-suite
+    Note: This currently requires images to be fetched and on the local path
+          ./images/. If you haven't already, run tools/fetch-images.sh to obtain
+          these images.
 
 Because the focus of this project was to produce a reasonably performant
 implementation of the canny edge detection algorithm, a fair amount of effort
