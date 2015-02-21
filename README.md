@@ -1,7 +1,5 @@
 #canny-opencl
 
--------------
-
 ##Summary
 This is an implementation of the Canny Edge Detection algorithm using OpenCL in
 C++. It uses OpenCV for some utility features, such as capturing an image from
