@@ -8,4 +8,4 @@ using namespace std;
 
 CvImageProcessor::CvImageProcessor() {}
 
-void CvImageProcessor::Canny() { cv::Canny(input, output, 40, 80); }
+void CvImageProcessor::Canny() { cv::Canny(input_, output_, 40, 80); }

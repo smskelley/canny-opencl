@@ -1,28 +1,27 @@
 #include <cmath>
 #include <opencv2/highgui/highgui.hpp>
 #include "imageprocessor.h"
-//#include <opencv2/imgproc/imgproc.hpp>
 
 class SerialImageProcessor : public ImageProcessor {
  protected:
-  cv::Mat theta;
-  cv::Mat buffers[2];
-  unsigned int nextIndex = 0;
+  cv::Mat theta_;
+  cv::Mat buffers_[2];
+  unsigned int next_index_ = 0;
 
   // Private Methods
   // nextBuff returns a reference to the next buffer that should be modified.
-  cv::Mat& nextBuff() { return buffers[nextIndex]; }
+  cv::Mat& NextBuff() { return buffers_[next_index_]; }
   // prevBuff returns a reference to the previous buffer that was modified.
-  cv::Mat& prevBuff() { return buffers[nextIndex ^ 1]; }
+  cv::Mat& PrevBuff() { return buffers_[next_index_ ^ 1]; }
   // Advance the buffer. Note there's only two, so right now it just swaps
   // to the other buffer right now.
-  void advanceBuff() { nextIndex ^= 1; }
+  void AdvanceBuff() { next_index_ ^= 1; }
 
  public:
   SerialImageProcessor();
 
   virtual void LoadImage(cv::Mat& input);
-  virtual cv::Mat GetOutput();
+  virtual cv::Mat output();
 
   // These methods are blocking calls which will perform what their name
   // implies. There are two sets, the first act upon internal buffers,

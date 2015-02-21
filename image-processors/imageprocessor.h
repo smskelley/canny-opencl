@@ -6,8 +6,8 @@
 class ImageProcessor {
  protected:
   // OpenCV Objects
-  cv::Mat input;
-  cv::Mat output;
+  cv::Mat input_;
+  cv::Mat output_;
 
  public:
   ImageProcessor() {}
@@ -17,7 +17,7 @@ class ImageProcessor {
 
   // Wait for all other operations to complete and then return the cv::Mat
   // corresponding to the output of previously enqueued operations.
-  virtual cv::Mat GetOutput();
+  virtual cv::Mat output();
 
   // For parallel implementations, this is a blocking call which finishes all
   // operations, acting as a barrier. This is useful for benchmarking

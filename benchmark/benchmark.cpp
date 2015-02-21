@@ -13,8 +13,8 @@ using namespace std;
 
 ///////// Public Methods ///////////////////////////////////////////////////////
 void Benchmark::Run() {
-  runFullAlogirithm();
-  runComponents();
+  RunFullAlogirithm();
+  RunComponents();
 }
 
 void Benchmark::OutputResults() {
@@ -28,39 +28,39 @@ void Benchmark::OutputResults() {
     cout << left << setw(10) << heading << value << endl;
   };
 
-  outputString("Title:", title);
-  outputString("File:", input.filename);
-  outputDouble("Megapixels:", input.MegaPixels());
-  outputDouble("Average:", results.average);
-  outputDouble("StDev:", results.standard_deviation);
+  outputString("Title:", title_);
+  outputString("File:", input_.filename);
+  outputDouble("Megapixels:", input_.MegaPixels());
+  outputDouble("Average:", results_.average);
+  outputDouble("StDev:", results_.standard_deviation);
   outputDouble("Kpx/ms:",
-               (input.height * input.width) / (1000 * results.average));
+               (input_.height * input_.width) / (1000 * results_.average));
 
-  for (int i = 0; i < results.stage_times.size(); i++)
-    outputDouble("Stage " + to_string(i), results.stage_times[i]);
+  for (int i = 0; i < results_.stage_times.size(); i++)
+    outputDouble("Stage " + to_string(i), results_.stage_times[i]);
 }
 
 ///////// Private Methods //////////////////////////////////////////////////////
 
 // Runs the full algorithm 'iteration' times. Finds the average and standard
 // deviation of its runtime.
-void Benchmark::runFullAlogirithm() {
+void Benchmark::RunFullAlogirithm() {
   double total_duration = 0;
 
   // each iteration duration is squared and then added to squared_durations.
   double squared_durations = 0;
 
   // time it however many times
-  for (int i = 0; i < iterations; i++) {
+  for (int i = 0; i < iterations_; i++) {
     double duration = 0;
-    processor->LoadImage(image);
+    processor_->LoadImage(image_);
 
     // Make sure that image is loaded before beginning the benchmark.
-    processor->FinishJobs();
+    processor_->FinishJobs();
     {
       AutoTimer timer;
-      processor->Canny();
-      processor->FinishJobs();
+      processor_->Canny();
+      processor_->FinishJobs();
       duration = timer.Duration();
     }
     total_duration += duration;
@@ -68,51 +68,51 @@ void Benchmark::runFullAlogirithm() {
   }
 
   // record the average
-  results.average = total_duration / iterations;
+  results_.average = total_duration / iterations_;
 
   // record the standard deviation
-  results.standard_deviation =
-      sqrt(squared_durations / iterations - results.average * results.average);
+  results_.standard_deviation =
+      sqrt(squared_durations / iterations_ - results_.average * results_.average);
 
   // write the generated image. Optional, but helps us verify that everything
   // ran correctly.
-  cv::imwrite(path + "canny_" + input.filename, processor->GetOutput());
+  cv::imwrite(path_ + "canny_" + input_.filename, processor_->output());
 }
 
 // Times each stage separately.
-void Benchmark::runComponents() {
-  processor->LoadImage(image);
-  processor->FinishJobs();
+void Benchmark::RunComponents() {
+  processor_->LoadImage(image_);
+  processor_->FinishJobs();
 
   // Stage 1: Gaussian Blur
   {
     AutoTimer timer;
-    processor->Gaussian();
-    processor->FinishJobs();
-    results.stage_times.push_back(timer.Duration());
+    processor_->Gaussian();
+    processor_->FinishJobs();
+    results_.stage_times.push_back(timer.Duration());
   }
 
   // Stage 2: Sobel Filtering
   {
     AutoTimer timer;
-    processor->Sobel();
-    processor->FinishJobs();
-    results.stage_times.push_back(timer.Duration());
+    processor_->Sobel();
+    processor_->FinishJobs();
+    results_.stage_times.push_back(timer.Duration());
   }
 
   // Stage 3: Nonmaximum Suppression
   {
     AutoTimer timer;
-    processor->NonMaxSuppression();
-    processor->FinishJobs();
-    results.stage_times.push_back(timer.Duration());
+    processor_->NonMaxSuppression();
+    processor_->FinishJobs();
+    results_.stage_times.push_back(timer.Duration());
   }
 
   // Stage 4: Hysteresis Thresholding
   {
     AutoTimer timer;
-    processor->HysteresisThresholding();
-    processor->FinishJobs();
-    results.stage_times.push_back(timer.Duration());
+    processor_->HysteresisThresholding();
+    processor_->FinishJobs();
+    results_.stage_times.push_back(timer.Duration());
   }
 }

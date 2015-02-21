@@ -10,20 +10,19 @@
 
 using namespace std;
 
-AutoTimer::AutoTimer() { start = chrono::steady_clock::now(); }
+AutoTimer::AutoTimer() { start_ = chrono::steady_clock::now(); }
 
 AutoTimer::AutoTimer(std::function<void(double)> call_back) {
-  this->call_back = call_back;
-  start = chrono::steady_clock::now();
+  this->call_back_ = call_back;
+  start_ = chrono::steady_clock::now();
 }
 
 AutoTimer::~AutoTimer() {
-  if (call_back) call_back(Duration());
+  if (call_back_) call_back_(Duration());
 }
 
 double AutoTimer::Duration() {
-  end = chrono::steady_clock::now();
-  return (chrono::duration_cast<chrono::duration<int, micro> >(end - start))
-             .count() /
-         1000.0;
+  end_ = chrono::steady_clock::now();
+  return (chrono::duration_cast<chrono::duration<int, micro> >(end_ - start_))
+             .count() / 1000.0;
 }

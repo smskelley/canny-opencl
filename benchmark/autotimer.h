@@ -11,9 +11,9 @@
 #include <chrono>
 
 class AutoTimer {
-  std::chrono::steady_clock::time_point start;
-  std::chrono::steady_clock::time_point end;
-  std::function<void(double)> call_back;
+  std::chrono::steady_clock::time_point start_;
+  std::chrono::steady_clock::time_point end_;
+  std::function<void(double)> call_back_;
 
  public:
   AutoTimer();

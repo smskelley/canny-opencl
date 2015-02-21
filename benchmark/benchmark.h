@@ -30,29 +30,29 @@ struct ResultSet {
 // other types of benchmarks we need to perform (serial and opencv's gpu
 // implementation). Probably turn this into an abstract base and derive from it.
 class Benchmark {
-  std::shared_ptr<ImageProcessor> processor;
-  cv::Mat image;
-  InputImage input;
-  ResultSet results;
-  std::string path;
-  std::string title;
-  int iterations;
+  std::shared_ptr<ImageProcessor> processor_;
+  cv::Mat image_;
+  InputImage input_;
+  ResultSet results_;
+  std::string path_;
+  std::string title_;
+  int iterations_;
 
-  void runFullAlogirithm();
-  void runComponents();
+  void RunFullAlogirithm();
+  void RunComponents();
 
  public:
   Benchmark(std::string _title, std::shared_ptr<ImageProcessor> _processor,
             std::string _path, InputImage _input, int _iterations)
-      : processor(_processor),
-        input(_input),
-        path(_path),
-        title(_title),
-        iterations(_iterations) {
-    image = cv::imread(path + input.filename, CV_LOAD_IMAGE_GRAYSCALE);
+      : processor_(_processor),
+        input_(_input),
+        path_(_path),
+        title_(_title),
+        iterations_(_iterations) {
+    image_ = cv::imread(path_ + input_.filename, CV_LOAD_IMAGE_GRAYSCALE);
   }
 
   void Run();
   void OutputResults();
-  ResultSet Results() { return results; }
+  ResultSet Results() { return results_; }
 };

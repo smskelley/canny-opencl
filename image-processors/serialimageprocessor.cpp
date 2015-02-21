@@ -17,19 +17,19 @@ SerialImageProcessor::SerialImageProcessor() {}
 
 void SerialImageProcessor::LoadImage(cv::Mat &input) {
   ImageProcessor::LoadImage(input);
-  nextBuff() = input;
-  prevBuff() = cv::Mat(input.rows, input.cols, CV_8UC1);
-  theta = cv::Mat(input.rows, input.cols, CV_8UC1);
-  advanceBuff();
+  NextBuff() = input;
+  PrevBuff() = cv::Mat(input.rows, input.cols, CV_8UC1);
+  theta_ = cv::Mat(input.rows, input.cols, CV_8UC1);
+  AdvanceBuff();
 }
 
-cv::Mat SerialImageProcessor::GetOutput() { return prevBuff(); }
+cv::Mat SerialImageProcessor::output() { return PrevBuff(); }
 
 // These methods are blocking calls which will perform what their name
 // implies
 void SerialImageProcessor::Gaussian() {
-  Gaussian(prevBuff(), nextBuff());
-  advanceBuff();
+  Gaussian(PrevBuff(), NextBuff());
+  AdvanceBuff();
 }
 
 void SerialImageProcessor::Gaussian(cv::Mat data, cv::Mat out) {
@@ -55,8 +55,8 @@ void SerialImageProcessor::Gaussian(cv::Mat data, cv::Mat out) {
 }
 
 void SerialImageProcessor::Sobel() {
-  Sobel(prevBuff(), nextBuff(), theta);
-  advanceBuff();
+  Sobel(PrevBuff(), NextBuff(), theta_);
+  AdvanceBuff();
 }
 
 void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta) {
@@ -124,8 +124,8 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta) {
 }
 
 void SerialImageProcessor::NonMaxSuppression() {
-  NonMaxSuppression(prevBuff(), nextBuff(), theta);
-  advanceBuff();
+  NonMaxSuppression(PrevBuff(), NextBuff(), theta_);
+  AdvanceBuff();
 }
 
 void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out,
@@ -214,9 +214,9 @@ void SerialImageProcessor::NonMaxSuppression(cv::Mat data, cv::Mat out,
 }
 
 void SerialImageProcessor::HysteresisThresholding() {
-  HysteresisThresholding(prevBuff(), nextBuff());
+  HysteresisThresholding(PrevBuff(), NextBuff());
 
-  advanceBuff();
+  AdvanceBuff();
 }
 
 void SerialImageProcessor::HysteresisThresholding(cv::Mat data, cv::Mat out) {
