@@ -19,6 +19,8 @@ vector<Benchmark> create_benchmarks(vector<InputImage> input_images);
 
 int main(int argc, char *argv[]) {
   // Images that will be used in the benchmarks as well as their resolution
+  // In the future, this should get the information dynamically based on
+  // the contents of the images folder.
   vector<InputImage> input_images {
           InputImage("lena.jpg", 100, 100),
           InputImage("Great_Tit.jpg", 2948, 2057),

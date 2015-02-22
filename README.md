@@ -5,9 +5,9 @@ As its name implies, the Canny edge detection algorithm finds edges in an image.
 The input is a grayscale image and the output is a black and white image with 1
 pixel wide white lines denoting edges. An edge may be defined as place of high
 contrast. The rate at which the contrast changes indicates the strength of the
-edge, where rate would be defined in terms of distance rather than time. It has
-four stages: gaussian blur, sobel filtering, non-maximum suppression, and
-hysteresis thresholding. Below I will briefly discuss each stage.
+edge. It has four stages: gaussian blur, sobel filtering, non-maximum
+suppression, and hysteresis thresholding. Below I will briefly discuss each
+stage.
 
 ###Gaussian Blur
 A gaussian blur is performed to reduce noise in the image. This is required
@@ -15,8 +15,8 @@ because noise is generally high contrast and would thus lead to false positives.
 It is implemented using image convolution. For those unfamiliar with it, image
 convolution is an operation which essentially replaces each pixel with a
 weighted average of its neighbors. The weights chosen are very important and
-cause image convolution to be applicable to a number of problems. The weights
-for a gaussian blur weight closer pixels more heavily over distant ones.
+cause image convolution to be applicable to a number of problems. The gaussian
+blur weights closer pixels more heavily than distant ones.
 
 ###Sobel Filtering
 Sobel filtering replaces each pixel with a combination of the x and y

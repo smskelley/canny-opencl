@@ -18,9 +18,16 @@ class AutoTimer {
   std::function<void(double)> call_back_;
 
  public:
+  // Create a simple timer that does not execute callback on destruction.
+  // Starts timer immediately.
   AutoTimer();
+
+  // Create a timer which will call the callback on destruction.
+  // Starts timer immediately.
   AutoTimer(std::function<void(double)> call_back);
   ~AutoTimer();
+
+  // Returns duration in milliseconds.
   double Duration();
 };
 }

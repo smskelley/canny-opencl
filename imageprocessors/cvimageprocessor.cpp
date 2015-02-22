@@ -5,7 +5,13 @@
 using namespace std;
 
 namespace ImageProcessors {
+
+// no setup is needed.
 CvImageProcessor::CvImageProcessor() {}
 
-void CvImageProcessor::Canny() { cv::Canny(input_, output_, 40, 80); }
+// Runs OpenCV's canny edge detection with 40, 80 being low, high thresholds
+void CvImageProcessor::Canny() {
+  cv::Canny(input_, output_, 40, 80);
+}
+
 }

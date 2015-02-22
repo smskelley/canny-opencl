@@ -4,15 +4,23 @@
 
 namespace ImageProcessors {
 
+namespace {
 using std::min;
 using std::max;
 
-const float gaus[3][3] = {
-    {0.0625, 0.125, 0.0625}, {0.1250, 0.125, 0.1250}, {0.0625, 0.125, 0.0625}};
+// Image convolution kernels used for canny edge detection
+const float gaus[3][3] = { {0.0625, 0.125, 0.0625},
+                           {0.1250, 0.250, 0.1250},
+                           {0.0625, 0.125, 0.0625} };
 
-const int sobx[3][3] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
+const int sobx[3][3] = { {-1, 0, 1},
+                         {-2, 0, 2},
+                         {-1, 0, 1} };
 
-const int soby[3][3] = {{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
+const int soby[3][3] = { {-1, -2, -1},
+                         { 0,  0,  0},
+                         { 1,  2,  1} };
+}
 
 // Contructor
 SerialImageProcessor::SerialImageProcessor() {}
@@ -117,8 +125,7 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta) {
         theta.data[pos] = 90;
       } else if (angle <= 15 * PI / 8) {
         theta.data[pos] = 135;
-      } else  // (angle <= 16*PI/8)
-      {
+      } else  // (angle <= 16*PI/8) {
         theta.data[pos] = 0;
       }
     }

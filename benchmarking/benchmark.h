@@ -19,18 +19,19 @@ struct InputImage {
   double MegaPixels() { return (height * width) / 1000000.0; }
 };
 
-// Holds all results collected. In general, these results are averaged over
-// more than one iteration.
+// Holds all results collected for a single benchmark. In general, these results
+// are averaged over more than one iteration.
 struct ResultSet {
   double average;
   double standard_deviation;
   std::vector<double> stage_times;
 };
 
-// Provides the ability to benchmark our canny edge detection algorithm.
-// This could probably stand to be abstracted so that it could work for the
-// other types of benchmarks we need to perform (serial and opencv's gpu
-// implementation). Probably turn this into an abstract base and derive from it.
+// Provides the ability to benchmark canny edge detection algorithms that
+// inherit from ImageProcessor. Each benchmark relates to one image processor
+// being run on one image. The full algorithm is run multiple times to find
+// the average and standard deviation of run times. It is then run on each stage
+// in isolation.
 class Benchmark {
   std::shared_ptr<ImageProcessors::ImageProcessor> processor_;
   cv::Mat image_;
@@ -44,18 +45,30 @@ class Benchmark {
   void RunComponents();
 
  public:
-  Benchmark(std::string _title, std::shared_ptr<ImageProcessors::ImageProcessor> _processor,
-            std::string _path, InputImage _input, int _iterations)
-      : processor_(_processor),
-        input_(_input),
-        path_(_path),
-        title_(_title),
-        iterations_(_iterations) {
+  // Construct a new benchmark using one image and one image processor.
+  // title: The name of the benchmark which will appear when results are output.
+  // processor: An image processor to benchmark
+  // path: The path to the image file
+  // input: InputImage object relating to the image to run on
+  // iterations: The number of times to perform the full algorithm.
+  Benchmark(std::string title, std::shared_ptr<ImageProcessors::ImageProcessor> processor,
+            std::string path, InputImage input, int iterations)
+      : processor_(processor),
+        input_(input),
+        path_(path),
+        title_(title),
+        iterations_(iterations) {
     image_ = cv::imread(path_ + input_.filename, CV_LOAD_IMAGE_GRAYSCALE);
   }
 
+  // Runs the full algorithm multiple times to find the average and standard
+  // deviation of run times. It is then run on each stage in isolation.
   void Run();
+
+  // Output the results to stdout
   void OutputResults();
+
+  // return the set of results.
   ResultSet Results() { return results_; }
 };
 }

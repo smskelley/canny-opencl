@@ -15,9 +15,11 @@ void Benchmark::Run() {
   RunComponents();
 }
 
+// Outputs results to stdout
 void Benchmark::OutputResults() {
   // I wish these could be merged via a templated lambda, but that doesn't
-  // exist.
+  // exist in C++11. Should be able to use auto in the future.
+  // results output should be left aligned with heading and value.
   auto outputDouble = [](string heading, double value) {
     cout << left << setw(10) << heading << value << endl;
   };
