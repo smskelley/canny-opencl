@@ -6,10 +6,8 @@ IMAGES="Great_Tit.jpg hs-2004-07-a-full_jpg.jpg lena.jpg world.jpg"
 # Decide where we should put the images.
 if [ $1 != "" ]
 then
-  echo "Yes 1"
   TARGET=$1
 else
-  echo "No 1"
   if [ -d "images" ]
   then
     TARGET="images"
