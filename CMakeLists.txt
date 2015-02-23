@@ -12,3 +12,4 @@ file(COPY "${PROJECT_SOURCE_DIR}/images" DESTINATION "${PROJECT_SOURCE_DIR}/bin"
 
 # executables should go in /bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+include_directories ("${PROJECT_SOURCE_DIR}/src/include/")
