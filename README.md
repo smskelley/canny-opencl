@@ -27,7 +27,7 @@ tested on the GPU and CPU of my early 2011 Macbook Pro 15".
       * [CvImageProcessor](#cvimageprocessor)
     * [Live Capture](#live-capture)
     * [Benchmarking](#benchmarking)
-  * [Optimization Methods](#optimizations-methods)
+  * [Optimization Methods](#optimization-methods)
     
 #The Canny Edge Detection Algorithm
 As its name implies, the Canny edge detection algorithm finds edges in an image.
