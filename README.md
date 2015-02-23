@@ -1,5 +1,20 @@
 #canny-opencl
 
+##Building
+This has only been tested on a handful of similar machines and likely won't
+build on platforms other than OSX. It was considered out of scope to target
+multiple platforms, but if someone wishes to tweak it to work on linux and/or
+windows, I would gladly accept the pull request. Building and running is pretty
+easy and should be roughly the following:
+
+    $ ./tools/fetch-images.sh
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+    $ cd ../bin
+    $ ./live-capture    # or ./benchmark-suite
+
 ##The Canny Edge Detection Algorithm
 As its name implies, the Canny edge detection algorithm finds edges in an image.
 The input is a grayscale image and the output is a black and white image with 1
