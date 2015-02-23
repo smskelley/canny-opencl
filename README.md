@@ -1,6 +1,35 @@
 #canny-opencl
+This is an implementation of the Canny Edge Detection algorithm using OpenCL in
+C++. It uses OpenCV for some utility features, such as capturing an image from
+a webcam, opening/writing an image file, and converting from BGR to Grayscale.
+Note that it was considered outside of the scope of this project to maintain
+cross platform compatability, so it has only been tested in OSX 10.10.
+Additionally, because OpenCL applications can be heavily optimized (or broken)
+depending on the target hardware, the range of target hardware has been
+significantly limited. It was a goal to be able to utilize OpenCL on the CPU
+and GPU, so this does support both and contains optimized versions for both.
+While this should run on most modern macs, it has only been optimized and
+tested on the GPU and CPU of my early 2011 Macbook Pro 15".
 
-##The Canny Edge Detection Algorithm
+#Table of Contents
+
+  * [The Canny Edge Detection Algorithm](#the-canny-edge-detection-algorithm)
+    * [Gaussian Blur](#gaussian-blur)
+    * [Sobel Filtering](#sobel-filtering)
+    * [Non-Maximum Suppression](#non-maximum-suppression)
+    * [Hysteresis Thresholding](#hysteresis-thresholding)
+  * [Executables](#executables)
+    * [Building](#building)
+  * [Code Layout](#code-layout)
+    * [Image Processors](#image-processors)
+      * [OpenclImageProcessor](#openclimageprocessor)
+      * [SerialImageProcessor](#serialimageprocessor)
+      * [CvImageProcessor](#cvimageprocessor)
+    * [Live Capture](#live-capture)
+    * [Benchmarking](#benchmarking)
+  * [Optimization Methods](#optimizations-methods)
+    
+#The Canny Edge Detection Algorithm
 As its name implies, the Canny edge detection algorithm finds edges in an image.
 The input is a grayscale image and the output is a black and white image with 1
 pixel wide white lines denoting edges. An edge may be defined as place of high
@@ -9,7 +38,7 @@ edge. It has four stages: gaussian blur, sobel filtering, non-maximum
 suppression, and hysteresis thresholding. Below I will briefly discuss each
 stage.
 
-###Gaussian Blur
+##Gaussian Blur
 A gaussian blur is performed to reduce noise in the image. This is required
 because noise is generally high contrast and would thus lead to false positives.
 It is implemented using image convolution. For those unfamiliar with it, image
@@ -18,7 +47,7 @@ weighted average of its neighbors. The weights chosen are very important and
 cause image convolution to be applicable to a number of problems. The gaussian
 blur weights closer pixels more heavily than distant ones.
 
-###Sobel Filtering
+##Sobel Filtering
 Sobel filtering replaces each pixel with a combination of the x and y
 derivatives of neighboring pixels. In doing so, pixels in high contrast areas
 will be "brighter" than pixels in low contrast areas. This essentially finds
@@ -30,8 +59,7 @@ replaced with essentially: sqrt( (di/dx)^2 + (di/dy)^2 ) where di represents the
 change in intensity. During this stage, the direction of the gradient is also
 calculated for each pixel which is needed for non-maximum suppression.
 
-
-###Non-Maximum Suppression
+##Non-Maximum Suppression
 At this point, there exists gradients representing probable edges, but our end
 goal is to represent edges as a single 1 pixel line. Non-maximum suppression 
 rules out pixels which are part of an edge, but do not define the edge. The
@@ -47,7 +75,7 @@ intensity among its neighbors in the direction of the gradient, then it may be
 the true edge, so its value is retained.
 
 
-###Hysteresis Thresholding
+##Hysteresis Thresholding
 We now have 1 pixel wide lines with values indicating the strength of the edge.
 In order to decide which of these should be considered an edge, we will use two
 threshold values. The low threshold indicates that pixels less than its value
@@ -62,28 +90,15 @@ performance (since no edge traversal is needed) while keeping the output
 accuracy high enough for most applications. This implementation uses the
 approximation approach.
 
-##Summary of this implementation
-This is an implementation of the Canny Edge Detection algorithm using OpenCL in
-C++. It uses OpenCV for some utility features, such as capturing an image from
-a webcam, opening/writing an image file, and converting from BGR to Grayscale.
-Note that it was considered outside of the scope of this project to maintain
-cross platform compatability, so it has only been tested in OSX 10.10.
-Additionally, because OpenCL applications can be heavily optimized (or broken)
-depending on the target hardware, the range of target hardware has been
-significantly limited. It was a goal to be able to utilize OpenCL on the CPU
-and GPU, so this does support both and contains optimized versions for both.
-While this should run on most modern macs, it has only been optimized and
-tested on the GPU and CPU of my early 2011 Macbook Pro 15".
-
-##Executables
-It contains two executables: live-capture and benchmark-suite. Live capture
+#Executables
+It contains two executables: `live-capture` and `benchmark-suite`. Live capture
 allows the user to view the results of canny edge detection in near real time
 using the webcam as input. The benchmark suite uses several implementations
 of the canny edge detection algorithm on multiple images. Each implementation
 is run multiple times on each image. Next, the stages of the algorithm are
 timed in isolation to better understand which steps are taking the longest.
 
-###Building
+##Building
 This has only been tested on a handful of similar machines and likely won't
 build on platforms other than OSX. If someone wishes to tweak it to work on
 linux and/or windows, I would gladly accept the pull request. Building and
@@ -97,11 +112,11 @@ running is pretty easy and should be roughly the following:
     $ cd ../bin
     $ ./live-capture    # or ./benchmark-suite
 
-##Code Layout
+#Code Layout
 The code is separated into three logical groups: image processors, live capture,
 and benchmarking.
 
-###Image Processors
+##Image Processors
 All Image Processors are contained within the ImageProcessors namespace and
 inherit from the ImageProcessor abstract base class. Each image processor
 implements the canny edge detection algorithm, but each one does it in a
@@ -109,7 +124,7 @@ different way. The focus of this project was canny edge detection in opencl,
 so the vast majority of effort was put into the OpenclImageProcessor class.
 Other image processors include SerialImageProcessor and CvImageProcessor.
 
-####OpenclImageProcessor
+###OpenclImageProcessor
 Based upon a boolean accepted by the constructor, this class can either
 target the CPU or GPU. When using the GPU, it will use 16x16 sized workgroups
 so that it may copy chunks of data to faster memory on the GPU and make fewer
@@ -118,17 +133,17 @@ don't support two demensional work groups, so the same kernels cannot be used.
 As such, the **kernels** directory contains two sets. These kernels are only
 used for the OpenclImageProcessor.
 
-####SerialImageProcessor
+###SerialImageProcessor
 The serial image processor was constructed by serializing the
 OpenclImageProcessor. It is used so that one may determine the speedup we get
 from using the OpenclImageProcessor.
 
-####CvImageProcessor
+###CvImageProcessor
 The Cv Image Processor simply uses OpenCV's canny edge detection algorithm.
 Unlike the other classes, it does not support executing the different stages
 of the algorithm in isolation.
 
-###Live Capture
+##Live Capture
     usage: ./live-capture [cpu|serial]
     If no argument is given, live-capture will use the GPU.
 
@@ -139,7 +154,7 @@ then fed into the image processor and its result is displayed on screen. The
 result is a near realtime video of canny edge detection algorithm running on
 the webcam's data.
 
-###Benchmarking
+##Benchmarking
     usage: ./benchmark-suite
     Note: This currently requires images to be fetched and on the local path
           ./images/. If you haven't already, run tools/fetch-images.sh to obtain
@@ -156,7 +171,7 @@ benchmarking the full algorithm, each stage is run in isolation to capture the
 amount of time each stage consumes. The test images ranged in size from 0.3-288
 megapixels.
 
-##Optimizations Used
+#Optimization Methods
 Initially, a single set of OpenCL kernels were used that were intended to run
 on both the CPU and GPU. The performance on the CPU was better than expected;
 it gave 7x speedups over serial on a four core processor. However, the GPU
