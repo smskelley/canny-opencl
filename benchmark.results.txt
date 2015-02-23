@@ -631,4 +631,79 @@ Stage 0   585.718
 Stage 1   1007.7
 Stage 2   630.969
 Stage 3   266.376
-=======
+
+--------------------------------------------------------------------------------
+23 Feb 2015 - Comparing branching and non-branching theta calculation in stage 1
+              (sobel kernel). It seems that it is faster on the gpu, but slower
+              on the CPU which was expected.
+--------------------------------------------------------------------------------
+
+Non-branching                            Conditionals
+--------------------------------------------------------------------------------
+Title:    OpenCL CPU                     Title:    OpenCL CPU
+File:     lena.jpg                       File:     lena.jpg
+Megapixels:0.01                          Megapixels:0.01
+Average:  1.982                          Average:  1.971
+StDev:    0.0825752                      StDev:    0.0672062
+Kpx/ms:   5.04541                        Kpx/ms:   5.07357
+Stage 0   0.55                           Stage 0   0.57
+Stage 1   0.878                          Stage 1   0.861
+Stage 2   0.354                          Stage 2   0.355
+Stage 3   0.336                          Stage 3   0.341
+                                         
+Title:    OpenCL CPU                     Title:    OpenCL CPU
+File:     Great_Tit.jpg                  File:     Great_Tit.jpg
+Megapixels:6.06404                       Megapixels:6.06404
+Average:  181.633                        Average:  177.377
+StDev:    1.37742                        StDev:    2.30756
+Kpx/ms:   33.3861                        Kpx/ms:   34.1873
+Stage 0   49.037                         Stage 0   49.475
+Stage 1   81.097                         Stage 1   75.562
+Stage 2   38.62                          Stage 2   37.323
+Stage 3   21.501                         Stage 3   20.582
+                                         
+Title:    OpenCL CPU                     Title:    OpenCL CPU
+File:     hs-2004-07-a-full_jpg.jpg      File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44                         Megapixels:38.44
+Average:  2540.68                        Average:  2528.28
+StDev:    18.392                         StDev:    24.4365
+Kpx/ms:   15.1298                        Kpx/ms:   15.204
+Stage 0   626.986                        Stage 0   597.049
+Stage 1   1096.09                        Stage 1   1005.58
+Stage 2   689.695                        Stage 2   643.016
+Stage 3   278.649                        Stage 3   267.164
+
+--------------------------------------------------------------------------------
+
+Title:    OpenCL GPU                     Title:    OpenCL GPU
+File:     lena.jpg                       File:     lena.jpg
+Megapixels:0.01                          Megapixels:0.01
+Average:  5.03833                        Average:  5.127
+StDev:    3.23837                        StDev:    3.32276
+Kpx/ms:   1.98478                        Kpx/ms:   1.95046
+Stage 0   0.874                          Stage 0   0.926
+Stage 1   0.872                          Stage 1   1.501
+Stage 2   0.905                          Stage 2   0.749
+Stage 3   0.518                          Stage 3   0.527
+                                         
+Title:    OpenCL GPU                     Title:    OpenCL GPU
+File:     Great_Tit.jpg                  File:     Great_Tit.jpg
+Megapixels:6.06404                       Megapixels:6.06404
+Average:  143.048                        Average:  152.209
+StDev:    0.0744625                      StDev:    0.0914804
+Kpx/ms:   42.3916                        Kpx/ms:   39.8402
+Stage 0   33.659                         Stage 0   33.257
+Stage 1   39.315                         Stage 1   47.798
+Stage 2   51.333                         Stage 2   52.581
+Stage 3   20.166                         Stage 3   20.364
+                                         
+Title:    OpenCL GPU                     Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg      File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44                         Megapixels:38.44
+Average:  945.532                        Average:  1004.97
+StDev:    0.584754                       StDev:    1.29782
+Kpx/ms:   40.6544                        Kpx/ms:   38.2499
+Stage 0   212.037                        Stage 0   212.423
+Stage 1   252.971                        Stage 1   303.238
+Stage 2   347.086                        Stage 2   355.067
+Stage 3   135.426                        Stage 3   135.271

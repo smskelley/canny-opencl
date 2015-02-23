@@ -97,40 +97,5 @@ __kernel void sobel_kernel(__global uchar *data,
 
     // Round the angle to one of four possibilities: 0, 45, 90, 135 degrees
     // then store it in the theta buffer at the proper position
-    if (angle <= PI/8) 
-    {
-        theta[pos] = 0;
-    }
-    else if (angle <= 3*PI/8)
-    {
-        theta[pos] = 45;
-    }
-    else if (angle <= 5*PI/8)
-    {
-        theta[pos] = 90;
-    }
-    else if (angle <= 7*PI/8)
-    {
-        theta[pos] = 135;
-    }
-    else if (angle <= 9*PI/8)
-    {
-        theta[pos] = 0;
-    }
-    else if (angle <= 11*PI/8)
-    {
-        theta[pos] = 45;
-    }
-    else if (angle <= 13*PI/8)
-    {
-        theta[pos] = 90;
-    }
-    else if (angle <= 15*PI/8)
-    {
-        theta[pos] = 135;
-    }
-    else // (angle <= 16*PI/8)
-    {
-        theta[pos] = 0;
-    }
+    theta[pos] = ((int)(degrees(angle * (PI/8) + PI/8-0.0001) / 45) * 45) % 180;
 }
