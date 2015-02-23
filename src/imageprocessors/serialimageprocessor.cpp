@@ -125,7 +125,7 @@ void SerialImageProcessor::Sobel(cv::Mat data, cv::Mat out, cv::Mat theta) {
         theta.data[pos] = 90;
       } else if (angle <= 15 * PI / 8) {
         theta.data[pos] = 135;
-      } else  // (angle <= 16*PI/8) {
+      } else  { // (angle <= 16*PI/8)
         theta.data[pos] = 0;
       }
     }
