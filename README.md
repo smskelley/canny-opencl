@@ -1,20 +1,5 @@
 #canny-opencl
 
-##Building
-This has only been tested on a handful of similar machines and likely won't
-build on platforms other than OSX. It was considered out of scope to target
-multiple platforms, but if someone wishes to tweak it to work on linux and/or
-windows, I would gladly accept the pull request. Building and running is pretty
-easy and should be roughly the following:
-
-    $ ./tools/fetch-images.sh
-    $ mkdir build
-    $ cd build
-    $ cmake ..
-    $ make
-    $ cd ../bin
-    $ ./live-capture    # or ./benchmark-suite
-
 ##The Canny Edge Detection Algorithm
 As its name implies, the Canny edge detection algorithm finds edges in an image.
 The input is a grayscale image and the output is a black and white image with 1
@@ -97,6 +82,20 @@ using the webcam as input. The benchmark suite uses several implementations
 of the canny edge detection algorithm on multiple images. Each implementation
 is run multiple times on each image. Next, the stages of the algorithm are
 timed in isolation to better understand which steps are taking the longest.
+
+###Building
+This has only been tested on a handful of similar machines and likely won't
+build on platforms other than OSX. If someone wishes to tweak it to work on
+linux and/or windows, I would gladly accept the pull request. Building and
+running is pretty easy and should be roughly the following:
+
+    $ ./tools/fetch-images.sh
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make
+    $ cd ../bin
+    $ ./live-capture    # or ./benchmark-suite
 
 ##Code Layout
 The code is separated into three logical groups: image processors, live capture,
