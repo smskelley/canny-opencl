@@ -11,6 +11,12 @@ and GPU, so this does support both and contains optimized versions for both.
 While this should run on most modern macs, it has only been optimized and
 tested on the GPU and CPU of my early 2011 Macbook Pro 15".
 
+To see a short demonstration, view the link below:
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=7nI8fPHpDXQ
+" target="_blank"><img src="http://img.youtube.com/vi/7nI8fPHpDXQ/0.jpg" 
+alt="Installation and demo video" width="320" height="240" border="10" /></a>
+
 #Table of Contents
 
   * [The Canny Edge Detection Algorithm](#the-canny-edge-detection-algorithm)
