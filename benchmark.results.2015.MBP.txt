@@ -1,0 +1,176 @@
+$ ./benchmark-suite 
+Title:    OpenCL GPU
+File:     lena.jpg
+Megapixels:0.01
+Average:  1.07167
+StDev:    0.207733
+Kpx/ms:   9.33126
+Stage 0   0.311
+Stage 1   0.541
+Stage 2   0.544
+Stage 3   0.257
+
+Title:    OpenCL CPU
+File:     lena.jpg
+Megapixels:0.01
+Average:  1.68733
+StDev:    0.0253026
+Kpx/ms:   5.92651
+Stage 0   0.464
+Stage 1   0.731
+Stage 2   0.316
+Stage 3   0.347
+
+Title:    Serial
+File:     lena.jpg
+Megapixels:0.01
+Average:  16.5903
+StDev:    0.78023
+Kpx/ms:   0.602761
+Stage 0   4.7
+Stage 1   13.107
+Stage 2   1.296
+Stage 3   0.883
+
+Title:    OpenCV
+File:     lena.jpg
+Megapixels:0.01
+Average:  0.965
+StDev:    0.185442
+Kpx/ms:   10.3627
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  21.9073
+StDev:    7.75705
+Kpx/ms:   276.804
+Stage 0   4.141
+Stage 1   5.64
+Stage 2   5.064
+Stage 3   2.184
+
+Title:    OpenCL CPU
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  151.716
+StDev:    2.38411
+Kpx/ms:   39.9697
+Stage 0   44.746
+Stage 1   60.275
+Stage 2   33.835
+Stage 3   18.391
+
+Title:    Serial
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  1373.78
+StDev:    100.874
+Kpx/ms:   4.41413
+Stage 0   435.599
+Stage 1   781.147
+Stage 2   65.626
+Stage 3   59.78
+
+Title:    OpenCV
+File:     Great_Tit.jpg
+Megapixels:6.06404
+Average:  47.2773
+StDev:    4.70685
+Kpx/ms:   128.265
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  100.011
+StDev:    6.2974
+Kpx/ms:   384.356
+Stage 0   24.691
+Stage 1   33.742
+Stage 2   25.728
+Stage 3   12.644
+
+Title:    OpenCL CPU
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  1228.32
+StDev:    8.9812
+Kpx/ms:   31.2948
+Stage 0   309.569
+Stage 1   495.018
+Stage 2   279.96
+Stage 3   161.821
+
+Title:    Serial
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  9235.33
+StDev:    1186.13
+Kpx/ms:   4.16228
+Stage 0   2360.05
+Stage 1   4760.79
+Stage 2   517.052
+Stage 3   438.71
+
+Title:    OpenCV
+File:     hs-2004-07-a-full_jpg.jpg
+Megapixels:38.44
+Average:  723.846
+StDev:    33.7418
+Kpx/ms:   53.1052
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
+
+Title:    OpenCL GPU
+File:     world.jpg
+Megapixels:288
+Average:  740.295
+StDev:    2.25282
+Kpx/ms:   389.034
+Stage 0   190.411
+Stage 1   258.859
+Stage 2   206.54
+Stage 3   91.19
+
+Title:    OpenCL CPU
+File:     world.jpg
+Megapixels:288
+Average:  12623.2
+StDev:    56.1374
+Kpx/ms:   22.8152
+Stage 0   3232.9
+Stage 1   4430.04
+Stage 2   3261.06
+Stage 3   2138.03
+
+Title:    Serial
+File:     world.jpg
+Megapixels:288
+Average:  61975.9
+StDev:    3820.04
+Kpx/ms:   4.64697
+Stage 0   18315.1
+Stage 1   35943.5
+Stage 2   3787.23
+Stage 3   3706.36
+
+Title:    OpenCV
+File:     world.jpg
+Megapixels:288
+Average:  2962.4
+StDev:    97.5659
+Kpx/ms:   97.2184
+Stage 0   0
+Stage 1   0
+Stage 2   0
+Stage 3   0
