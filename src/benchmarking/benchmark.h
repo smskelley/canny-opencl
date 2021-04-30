@@ -5,6 +5,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "autotimer.h"
 #include "imageprocessor.h"
+#include <memory>
 
 namespace Benchmarking
 {
