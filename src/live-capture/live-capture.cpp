@@ -6,6 +6,7 @@
 #include "imageprocessor.h"
 #include "openclimageprocessor.h"
 #include "serialimageprocessor.h"
+#include <memory>
 
 using namespace std;
 using namespace ImageProcessors;
